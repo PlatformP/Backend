@@ -126,3 +126,6 @@ dmypy.json
 
 # pycharm stuff
 .idea/
+
+#migrations
+#apps/frontend/migrations/
