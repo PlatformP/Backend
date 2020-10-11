@@ -128,4 +128,4 @@ dmypy.json
 .idea/
 
 #migrations
-#apps/frontend/migrations/
+apps/frontend/migrations/
