@@ -20,7 +20,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 # Deciding if its on the server
 config = RawConfigParser()
-config.read('/etc/GrassRoot/settings_server.ini' if set_on_server(BASE_DIR) else os.path.join(BASE_DIR,
+config.read('/etc/backend_config/settings_server.ini' if set_on_server(BASE_DIR) else os.path.join(BASE_DIR,
                                                                                                     'Backend',
                                                                                                     'settings_local.ini'))
 
