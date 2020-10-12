@@ -129,3 +129,7 @@ dmypy.json
 
 #migrations
 apps/frontend/migrations/
+
+# config files
+Backend/settings_local.ini
+Backend/settings_server.ini
