@@ -33,7 +33,7 @@ SECRET_KEY = config.get('secrets', 'SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.get('debug', 'DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1', '3.131.38.158']
+ALLOWED_HOSTS = ['127.0.0.1']
 
 # Application definition
 
@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_yasg',
-    'rest_framework_api_key',
     'apps.frontend',
 ]
 
@@ -59,6 +58,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.auth.middleware.RemoteUserMiddleware'
+]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'django.contrib.auth.backends.RemoteUserBackend'
 ]
 
 ROOT_URLCONF = 'Backend.urls'
@@ -114,16 +119,27 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Django Rest Permissions
 REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [
-        # 'rest_framework_api_key.permissions.HasAPIKey',
-        # 'rest_framework.permissions.IsAuthenticated',
-    ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
 }
 
-API_KEY_CUSTOM_HEADER = "HTTP_API_KEY"
+#JWT AUTH
+JWT_AUTH = {
+    'JWT_PAYLOAD_GET_USERNAME_HANDLER':
+        'auth0authorization.utils.jwt_get_username_from_payload_handler',
+    'JWT_DECODE_HANDLER':
+        'auth0authorization.utils.jwt_decode_token',
+    'JWT_ALGORITHM': 'RS256',
+    'JWT_AUDIENCE': 'https://grass-roots-usa.us.auth0.com/api/v2/',
+    'JWT_ISSUER': 'https://grass-roots-usa.us.auth0.com/',
+    'JWT_AUTH_HEADER_PREFIX': 'Bearer',
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

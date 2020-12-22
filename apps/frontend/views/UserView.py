@@ -51,7 +51,7 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(data='username or password do not exist', status=status.HTTP_418_IM_A_TEAPOT)
-
+'''
     @action(detail=False, methods=['post'])
     def password_reset_request(self, request):
         """
@@ -62,7 +62,7 @@ class UserViewSet(viewsets.ModelViewSet):
         from Scripts.HelperMethods import get_username
         from rest_framework_simplejwt.tokens import RefreshToken
         from json import dumps
-        from CandidPoliticsBackend.settings import BASE_URL
+        from Backend.settings import BASE_URL
         from django.utils.timezone import timedelta
 
         request_dict = literal_eval(request.body.decode)
@@ -73,7 +73,7 @@ class UserViewSet(viewsets.ModelViewSet):
         token.lifetime = timedelta(minutes=30)
         url_endpoint = '{}/passwordreset/{}'.format(BASE_URL, str(token.access_token))
         return Response(data=dumps(token), status=status.HTTP_200_OK)
-
+'''
 
 @api_view(http_method_names=['post'])
 def password_reset(request):
