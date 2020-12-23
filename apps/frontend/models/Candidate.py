@@ -6,7 +6,7 @@ class Candidate(models.Model):
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.ImageField(upload_to='candidate_picture', null=True)
-    location = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True)
+    political_party = models.ForeignKey('PoliticalParty', on_delete=models.SET_NULL, null=True)
     bio = models.TextField(default=None, null=True)
 
     is_verified = models.BooleanField(default=None, null=False)
@@ -16,4 +16,4 @@ class Candidate(models.Model):
         verbose_name_plural = 'Candidates'
 
     def __str__(self):
-        return self.user.username
+        return f'{self.user.first_name} {self.user.last_name}'

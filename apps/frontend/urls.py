@@ -8,6 +8,7 @@ from .views.PolicyView import PolicyViewSet
 from .views.ElectionInLineView import ElectionInLineViewSet
 from .views.VoterFavElectionsView import VoterFavElectionViewSet
 from .views.VoterView import VoterViewSet
+from .views.PoliticalPartyView import PoliticalPartyViewSet
 
 router = routers.DefaultRouter()
 router.register(r'Candidate', CandidateViewSet)
@@ -18,6 +19,7 @@ router.register(r'User', UserViewSet)
 router.register(r'ElectionInLine', ElectionInLineViewSet)
 router.register(r'VoterFavElections', VoterFavElectionViewSet)
 router.register(r'Voter', VoterViewSet)
+router.register(r'PoliticalParty', PoliticalPartyViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

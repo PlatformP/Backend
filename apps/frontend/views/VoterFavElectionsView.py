@@ -1,9 +1,9 @@
 from apps.frontend.serializers import VoterFavElectionsSerializer
-from apps.frontend.models.Voter_FavElections import Voter_FavElections
+from apps.frontend.models.VoterFavElections import VoterFavElections
 
 from rest_framework import viewsets
 
 
 class VoterFavElectionViewSet(viewsets.ModelViewSet):
-    queryset = Voter_FavElections.objects.all()
+    queryset = VoterFavElections.objects.all()
     serializer_class = VoterFavElectionsSerializer
