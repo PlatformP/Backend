@@ -11,12 +11,6 @@ Once you have the project cloned and the python environment set up cd into the p
 ## Running the Project
 to run te project either run it in the IDE of your choice or cd into the project directory and type `python manage.py runserver`. This runs the development server. To access the admin page go to *127.0.0.1:8000/admin*. To access the API page go to *127.0.0.1:8000/API*
 
-## Calling the API
-In order to call the API first run the API generation script -> *Scripts/DataMigrations/ApiKeyGeneration.py*. This stores the api-key in a text file called api_key.txt in the base directory. Then when calling the url pass the API Key in a header `API-KEY: ********` where ****** is the API key
-
-## JWT
-The token endpoint is `../API/token/` which is a post that accepts user credentials. This returns a token and a refresh token. To refresh a token after it has been deactivated got to `.../API/token/refresh/` and pass the refresh token into the post
-
 ## Github Desktop
 we will use Github desktop to commit work. there is a guide [here](https://docs.github.com/en/desktop)
 We have a dev and a master branch. The master branch will be updated from the dev once we decide to merge changes onto the server
