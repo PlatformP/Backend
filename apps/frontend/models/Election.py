@@ -7,6 +7,11 @@ class Election(models.Model):
         (0, 'Past')
     ]
 
+    ELECTION_TYPE_CHOICES = [
+        (0, 'Mayor'),
+        (1, 'City Counsel')
+    ]
+
     name = models.CharField(max_length=100)
     date = models.DateField()
     location = models.ForeignKey('frontend.Location', on_delete=models.SET_NULL, blank=False, null=True)

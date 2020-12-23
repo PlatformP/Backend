@@ -2,11 +2,12 @@ from django.contrib import admin
 
 from .models.Candidate import Candidate
 from .models.Policy import Policy
-from .models.Election_InLine import Election_InLine
+from .models.ElectionInLine import ElectionInLine
 from .models.Location import Location
 from .models.Election import Election
 from .models.Voter import Voter
-from .models.Voter_FavElections import Voter_FavElections
+from .models.VoterFavElections import VoterFavElections
+from .models.PoliticalParty import PoliticalParty
 
 
 # Inlines
@@ -15,11 +16,11 @@ class PolicyInLine(admin.TabularInline):
 
 
 class ElectionInLine(admin.TabularInline):
-    model = Election_InLine
+    model = ElectionInLine
 
 
 class Voter_FavElections_Inline(admin.TabularInline):
-    model = Voter_FavElections
+    model = VoterFavElections
 
 
 # models
@@ -43,7 +44,12 @@ class VoterAdmin(admin.ModelAdmin):
     list_display = ['user']
 
 
+class Political_PartyAdmin(admin.ModelAdmin):
+    list_display = ['name']
+
+
 admin.site.register(Candidate, CandidateAdmin)
 admin.site.register(Election, ElectionAdmin)
 admin.site.register(Location, LocationAdmin)
 admin.site.register(Voter, VoterAdmin)
+admin.site.register(PoliticalParty, Political_PartyAdmin)
