@@ -13,7 +13,7 @@ from ast import literal_eval
 class ElectionViewSet(viewsets.ModelViewSet):
     queryset = Election.objects.all().order_by('name')
     serializer_class = ElectionSerializer
-    permission_classes = AllowAny
+    #permission_classes = AllowAny
 
     @action(detail=False, methods=['GET'])
     def get_candidates(self, request):
