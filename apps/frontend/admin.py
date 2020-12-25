@@ -45,7 +45,7 @@ class VoterAdmin(admin.ModelAdmin):
 
 
 class Political_PartyAdmin(admin.ModelAdmin):
-    list_display = ['name']
+    list_display = ['name', 'logo']
 
 
 admin.site.register(Candidate, CandidateAdmin)

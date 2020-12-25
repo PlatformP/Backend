@@ -17,4 +17,4 @@ class PoliticalParty(models.Model):
         verbose_name_plural = 'Political Parties'
 
     def __str__(self):
-        return self.NAME_CHOICES[self.name]
+        return self.NAME_CHOICES[self.name][1]
