@@ -13,7 +13,7 @@ from ast import literal_eval
 
 
 class CandidateViewSet(viewsets.ModelViewSet):
-    queryset = Candidate.objects.all().order_by('user__username')
+    queryset = Candidate.objects.all().order_by('auth0_id')
     serializer_class = CandidateSerializer
 
     @action(detail=False, methods=['get'])

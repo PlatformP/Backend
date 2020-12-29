@@ -36,12 +36,12 @@ class LocationAdmin(admin.ModelAdmin):
 
 class CandidateAdmin(admin.ModelAdmin):
     inlines = [PolicyInLine, ]
-    list_display = ['user', 'bio', 'is_verified']
+    list_display = ['auth0_id', 'bio']
 
 
 class VoterAdmin(admin.ModelAdmin):
     inlines = [Voter_FavElections_Inline, ]
-    list_display = ['user']
+    list_display = ['auth0_id']
 
 
 class Political_PartyAdmin(admin.ModelAdmin):

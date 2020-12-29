@@ -11,20 +11,21 @@ from .models.PoliticalParty import PoliticalParty
 
 from django.contrib.auth.models import User
 
-
+'''
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
         fields = ['url', 'username', 'first_name', 'last_name', 'email', 'password']
-
+'''
 
 class CandidateSerializer(serializers.HyperlinkedModelSerializer):
+    '''
     user = serializers.HyperlinkedRelatedField(
         many=False,
         view_name='user-detail',
         queryset=User.objects.all()
     )
-
+    '''
     political_party = serializers.HyperlinkedRelatedField(
         many=False,
         view_name='politicalparty-detail',
@@ -33,7 +34,7 @@ class CandidateSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Candidate
-        fields = ['url', 'user', 'bio', 'is_verified', 'political_party']
+        fields = ['url', 'auth0_id', 'bio', 'political_party']
 
 
 class LocationSerializer(serializers.HyperlinkedModelSerializer):
@@ -51,7 +52,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Election
-        fields = ['url', 'name', 'location', 'status', 'date']
+        fields = ['url', 'name', 'description', 'location', 'status', 'date']
 
 
 class PolicySerializer(serializers.HyperlinkedModelSerializer):
@@ -84,16 +85,17 @@ class ElectionInLineSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class VoterSerializer(serializers.HyperlinkedModelSerializer):
+    '''
     user = serializers.HyperlinkedRelatedField(
         many=False,
         view_name='user-detail',
         queryset=User.objects.all()
     )
+    '''
 
     class Meta:
         model = Voter
-        fields = ['user', ]
-
+        fields = ['url', 'auth0_id']
 
 class VoterFavElectionsSerializer(serializers.HyperlinkedModelSerializer):
     election = serializers.HyperlinkedRelatedField(

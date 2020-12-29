@@ -14,6 +14,7 @@ class Election(models.Model):
 
     name = models.CharField(max_length=100)
     date = models.DateField()
+    description = models.TextField(max_length=250)
     location = models.ForeignKey('frontend.Location', on_delete=models.SET_NULL, blank=False, null=True)
     status = models.SmallIntegerField(default=1, choices=STATUS_CHOICE_FIELD)
 

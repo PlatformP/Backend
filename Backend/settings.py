@@ -14,6 +14,7 @@ from pathlib import Path
 import os
 from Scripts.ServerConfig.set_settings import set_on_server
 from configparser import RawConfigParser
+from corsheaders.defaults import default_headers
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -122,9 +123,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Django Rest Permissions
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-#        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',
         #TODO: check before launch
-        'rest_framework.permissions.AllowAny',
+        #'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
@@ -137,12 +138,14 @@ REST_FRAMEWORK = {
 # TODO: Close down before launch
 CORS_ORIGIN_ALLOW_ALL = True
 
+CORS_ALLOW_HEADERS = list(default_headers) + ['HTTP_AUTHORIZATION']
+
 #JWT AUTH
 JWT_AUTH = {
     'JWT_PAYLOAD_GET_USERNAME_HANDLER':
-        'auth0authorization.utils.jwt_get_username_from_payload_handler',
+        'apps.auth0authorization.utils.jwt_get_username_from_payload_handler',
     'JWT_DECODE_HANDLER':
-        'auth0authorization.utils.jwt_decode_token',
+        'apps.auth0authorization.utils.jwt_decode_token',
     'JWT_ALGORITHM': 'RS256',
     'JWT_AUDIENCE': 'https://grass-roots-usa.us.auth0.com/api/v2/',
     'JWT_ISSUER': 'https://grass-roots-usa.us.auth0.com/',

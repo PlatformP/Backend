@@ -1,7 +1,6 @@
 from django.urls import include, path
 from rest_framework import routers
 from .views.CandidateView import CandidateViewSet
-from .views.UserView import UserViewSet
 from .views.ElectionView import ElectionViewSet
 from .views.LocationView import LocationViewSet
 from .views.PolicyView import PolicyViewSet
@@ -15,7 +14,6 @@ router.register(r'Candidate', CandidateViewSet)
 router.register(r'Election', ElectionViewSet)
 router.register(r'Location', LocationViewSet)
 router.register(r'Policies', PolicyViewSet)
-router.register(r'User', UserViewSet)
 router.register(r'ElectionInLine', ElectionInLineViewSet)
 router.register(r'VoterFavElections', VoterFavElectionViewSet)
 router.register(r'Voter', VoterViewSet)

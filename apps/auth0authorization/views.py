@@ -3,6 +3,7 @@ import jwt
 
 from django.http import JsonResponse
 
+
 def get_token_auth_header(request):
     """Obtains the Access Token from the Authorization Header
     """
@@ -12,11 +13,13 @@ def get_token_auth_header(request):
 
     return token
 
+
 def requires_scope(required_scope):
     """Determines if the required scope is present in the Access Token
     Args:
         required_scope (str): The scope required to access the resource
     """
+
     def require_scope(f):
         @wraps(f)
         def decorated(*args, **kwargs):
@@ -30,5 +33,7 @@ def requires_scope(required_scope):
             response = JsonResponse({'message': 'You don\'t have access to this resource'})
             response.status_code = 403
             return response
+
         return decorated
+
     return require_scope
