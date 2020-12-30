@@ -40,7 +40,7 @@ class CandidateSerializer(serializers.HyperlinkedModelSerializer):
 class LocationSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Location
-        fields = ['url', 'city', 'state']
+        fields = ['url','id', 'city', 'state']
 
 
 class ElectionSerializer(serializers.HyperlinkedModelSerializer):
@@ -52,7 +52,7 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Election
-        fields = ['url', 'name', 'description', 'location', 'status', 'date']
+        fields = ['url','id', 'name', 'description', 'location', 'status', 'date']
 
 
 class PolicySerializer(serializers.HyperlinkedModelSerializer):
@@ -64,7 +64,7 @@ class PolicySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Policy
-        fields = ['url', 'description', 'candidate']
+        fields = ['url', 'id', 'description', 'candidate']
 
 
 class ElectionInLineSerializer(serializers.HyperlinkedModelSerializer):
@@ -81,7 +81,7 @@ class ElectionInLineSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = ElectionInLine
-        fields = ['url', 'election', 'candidate']
+        fields = ['url', 'id', 'election', 'candidate']
 
 
 class VoterSerializer(serializers.HyperlinkedModelSerializer):
@@ -112,10 +112,10 @@ class VoterFavElectionsSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = VoterFavElections
-        fields = ['election', 'voter']
+        fields = ['url', 'id', 'election', 'voter']
 
 
 class PoliticalPartySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = PoliticalParty
-        fields = ['name']
+        fields = ['url', 'id', 'name']
