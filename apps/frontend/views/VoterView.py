@@ -6,7 +6,7 @@ from apps.frontend.serializers import VoterSerializer
 
 
 class VoterViewSet(viewsets.ModelViewSet):
-    queryset = Voter.objects.all().order_by('auth0_id')
+    queryset = Voter.objects.all().order_by('user__username')
     serializer_class = VoterSerializer
 
     @action(detail=False, methods=['GET'])
