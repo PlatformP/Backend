@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 class Candidate(models.Model):
 
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     political_party = models.ForeignKey('PoliticalParty', on_delete=models.SET_NULL, null=True)
     bio = models.TextField(default=None, null=True)
 
