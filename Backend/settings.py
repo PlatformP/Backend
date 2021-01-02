@@ -174,14 +174,6 @@ STATIC_URL = '/static/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 MEDIA_URL = '/media/'
 
-# Google API Key
-GOOGLE_API_KEY = config.get('google_api', 'GOOGLE_API_KEY')
-
-# Frontend API Key
-from Scripts.HelperMethods import set_frontend_api_key
-
-# FRONTEND_API_KEY = set_frontend_api_key()
-
 
 ## Django Email Config
 EMAIL_USE_TLS = True

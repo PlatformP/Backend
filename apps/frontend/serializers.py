@@ -50,7 +50,8 @@ class ElectionSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Election
-        fields = ['url', 'id', 'name', 'description', 'location', 'status', 'date']
+        fields = ['url','id', 'name', 'description', 'location', 'status', 'date']
+        depth = 1
 
 
 class PolicySerializer(serializers.HyperlinkedModelSerializer):
@@ -66,20 +67,24 @@ class PolicySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ElectionInLineSerializer(serializers.HyperlinkedModelSerializer):
+    '''
     election = serializers.HyperlinkedRelatedField(
         many=False,
         view_name='election-detail',
         queryset=Election.objects.all()
     )
+    '''
+    '''
     candidate = serializers.HyperlinkedRelatedField(
         many=False,
         view_name='candidate-detail',
         queryset=Candidate.objects.all()
     )
-
+    '''
     class Meta:
         model = ElectionInLine
-        fields = ['url', 'id', 'election', 'candidate']
+        fields = ['url', 'id', 'election_id', 'candidate']
+        depth = 1
 
 
 class VoterSerializer(serializers.HyperlinkedModelSerializer):
