@@ -32,7 +32,7 @@ config.read('/etc/backend_config/settings_server.ini' if set_on_server(BASE_DIR)
 SECRET_KEY = config.get('secrets', 'SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config.get('debug', 'DEBUG')
+DEBUG = config.getboolean('debug', 'DEBUG')
 print(f'debug is {DEBUG}')
 print(f'debug type is {type(DEBUG)}')
 
