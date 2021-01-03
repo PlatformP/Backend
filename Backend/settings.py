@@ -33,6 +33,7 @@ SECRET_KEY = config.get('secrets', 'SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.get('debug', 'DEBUG')
+print(f'debug is {DEBUG}')
 
 ALLOWED_HOSTS = ['127.0.0.1', '3.138.110.66']
 
