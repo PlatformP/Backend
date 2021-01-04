@@ -134,3 +134,7 @@ apps/frontend/migrations/
 Backend/settings_local.ini
 Backend/settings_server.ini
 *.ini
+
+#media and static files
+/media/
+/static/

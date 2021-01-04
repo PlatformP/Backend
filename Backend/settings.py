@@ -147,8 +147,8 @@ JWT_AUTH = {
     'JWT_DECODE_HANDLER':
         'apps.auth0authorization.utils.jwt_decode_token',
     'JWT_ALGORITHM': 'RS256',
-    'JWT_AUDIENCE': 'https://grass-roots-usa.us.auth0.com/api/v2/',
-    'JWT_ISSUER': 'https://grass-roots-usa.us.auth0.com/',
+    'JWT_AUDIENCE': config.get('auth0', 'AUDIENCE'),
+    'JWT_ISSUER': 'https://{}'.format(config.get('auth0', 'ISSUER')),
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
 }
 
