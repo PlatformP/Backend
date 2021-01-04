@@ -7,6 +7,7 @@ from .models.Location import Location
 from .models.Election import Election
 from .models.Voter import Voter
 from .models.VoterFavElections import VoterFavElections
+from .models.VoterCandidateMatch import VoterCandidateMatch
 from .models.PoliticalParty import PoliticalParty
 
 
@@ -21,6 +22,10 @@ class ElectionInLine(admin.TabularInline):
 
 class Voter_FavElections_Inline(admin.TabularInline):
     model = VoterFavElections
+
+
+class VoterCandidateMatchInLine(admin.TabularInline):
+    model = VoterCandidateMatch
 
 
 # models
@@ -40,7 +45,7 @@ class CandidateAdmin(admin.ModelAdmin):
 
 
 class VoterAdmin(admin.ModelAdmin):
-    inlines = [Voter_FavElections_Inline, ]
+    inlines = [Voter_FavElections_Inline, VoterCandidateMatchInLine]
     list_display = ['user']
 
 
