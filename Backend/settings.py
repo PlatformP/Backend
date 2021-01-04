@@ -148,7 +148,7 @@ JWT_AUTH = {
         'apps.auth0authorization.utils.jwt_decode_token',
     'JWT_ALGORITHM': 'RS256',
     'JWT_AUDIENCE': config.get('auth0', 'AUDIENCE'),
-    'JWT_ISSUER': 'https://{}'.format(config.get('auth0', 'ISSUER')),
+    'JWT_ISSUER': 'https://{}/'.format(config.get('auth0', 'ISSUER')),
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
 }
 
