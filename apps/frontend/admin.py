@@ -9,13 +9,8 @@ from .models.Voter import Voter
 from .models.VoterFavElections import VoterFavElections
 from .models.VoterCandidateMatch import VoterCandidateMatch
 from .models.PoliticalParty import PoliticalParty
-from .models.testinline import testinline
 
 # Inlines
-class testinline(admin.TabularInline):
-    model = testinline
-
-
 class PolicyInLine(admin.TabularInline):
     model = Policy
 
@@ -49,7 +44,7 @@ class CandidateAdmin(admin.ModelAdmin):
 
 
 class VoterAdmin(admin.ModelAdmin):
-    inlines = (Voter_FavElections_Inline, VoterCandidateMatchInLine, testinline)
+    inlines = (Voter_FavElections_Inline, VoterCandidateMatchInLine)
     list_display = ['user']
 
 
