@@ -15,10 +15,10 @@ class VoterViewSet(viewsets.ModelViewSet):
     queryset = Voter.objects.all().order_by('user__username')
     serializer_class = VoterSerializer
 
-    @action(detail=False, methods=['GET'], url_path='get_elections/(?P<username>.+)')
-    def get_elections(self, request, username):
+    @action(detail=False, methods=['GET'], url_path='get_fav_election')
+    def get_elections(self, request):
         voter_fav_election_id = VoterFavElections.objects.filter(
-            voter__user__username=f'auth0.{username}'). \
+            voter__user=request.user). \
             values_list('election_id', flat=True)
         election_query = Election.objects.filter(pk__in=voter_fav_election_id)
         data = ElectionSerializer(election_query, many=True, context={'request': request}).data
