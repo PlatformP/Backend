@@ -14,3 +14,11 @@ class Candidate(models.Model):
 
     def __str__(self):
         return f'{self.user.username}'
+
+    def __dict__(self):
+        return {
+            'id': self.id,
+            'user': self.user.username,
+            'political_party': self.political_party.name,
+            'bio': self.bio
+        }
