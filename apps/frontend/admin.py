@@ -45,7 +45,7 @@ class CandidateAdmin(admin.ModelAdmin):
 
 
 class VoterAdmin(admin.ModelAdmin):
-    inlines = [Voter_FavElections_Inline, VoterCandidateMatchInLine]
+    inlines = (Voter_FavElections_Inline, VoterCandidateMatchInLine)
     list_display = ['user']
 
 
