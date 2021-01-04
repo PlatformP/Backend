@@ -1,4 +1,5 @@
 from django.contrib.auth import authenticate
+from Backend.settings import AUTH0_ISSUER, AUTH0_AUDIENCE
 
 import json
 
@@ -23,5 +24,5 @@ def jwt_decode_token(token):
     if public_key is None:
         raise Exception('Public key not found.')
 
-    issuer = 'https://{}/'.format('grass-roots-usa.us.auth0.com')
-    return jwt.decode(token, public_key, audience='https://grass-roots-usa.us.auth0.com/api/v2/', issuer=issuer, algorithms=['RS256'])
+    issuer = 'https://{}/'.format(AUTH0_ISSUER)
+    return jwt.decode(token, public_key, audience=AUTH0_AUDIENCE, issuer=issuer, algorithms=['RS256'])

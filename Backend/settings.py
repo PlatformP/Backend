@@ -33,8 +33,6 @@ SECRET_KEY = config.get('secrets', 'SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.getboolean('debug', 'DEBUG')
-print(f'debug is {DEBUG}')
-print(f'debug type is {type(DEBUG)}')
 
 ALLOWED_HOSTS = ['127.0.0.1', '3.138.110.66']
 
@@ -125,9 +123,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Django Rest Permissions
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
-        #'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticated',
         #TODO: check before launch
-        'rest_framework.permissions.AllowAny',
+        #'rest_framework.permissions.AllowAny',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
@@ -153,6 +151,10 @@ JWT_AUTH = {
     'JWT_ISSUER': 'https://grass-roots-usa.us.auth0.com/',
     'JWT_AUTH_HEADER_PREFIX': 'Bearer',
 }
+
+#auth0
+AUTH0_ISSUER = config.get('auth0', 'ISSUER')
+AUTH0_AUDIENCE = config.get('auth0', 'AUDIENCE')
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
