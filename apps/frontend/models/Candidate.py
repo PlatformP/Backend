@@ -15,7 +15,7 @@ class Candidate(models.Model):
     def __str__(self):
         return f'{self.user.username}'
 
-    def __dict__(self):
+    def get_dict(self):
         return {
             'id': self.id,
             'user': self.user.username,

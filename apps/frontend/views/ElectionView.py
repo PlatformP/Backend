@@ -24,13 +24,13 @@ class ElectionViewSet(viewsets.ModelViewSet):
             candiate_list = []
 
             for candidate_q in instance.electioninline_set.all():
-                d = candidate_q.candidate.__dict__
-                del (d['_state'])
-                candiate_list.append(d)
+                d = candidate_q.candidate.get_dict()
                 voter_match = VoterCandidateMatch.objects.filter(voter__user=request.user, candidate__pk=d['id']). \
                     values_list('match_pct', flat=True)[0]
                 if voter_match is not None:
                     d['voter_match'] = voter_match
+
+                candiate_list.append(d)
 
             instance_values[i].update({'Candidates': candiate_list})
 
