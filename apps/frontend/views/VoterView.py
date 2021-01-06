@@ -10,6 +10,7 @@ from apps.frontend.models.Election import Election
 from apps.frontend.serializers import VoterSerializer
 from apps.frontend.serializers import ElectionSerializer
 
+from Scripts.HelperMethods import get_ballot_by_queryset
 
 class VoterViewSet(viewsets.ModelViewSet):
     queryset = Voter.objects.all().order_by('user__username')
@@ -21,5 +22,5 @@ class VoterViewSet(viewsets.ModelViewSet):
             voter__user=request.user). \
             values_list('election_id', flat=True)
         election_query = Election.objects.filter(pk__in=voter_fav_election_id)
-        data = ElectionSerializer(election_query, many=True, context={'request': request}).data
+        data = get_ballot_by_queryset(election_query, user=request.user)
         return Response(data=data, status=HTTP_200_OK)
