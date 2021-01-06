@@ -8,9 +8,9 @@ from apps.frontend.models.VoterFavElections import VoterFavElections
 from apps.frontend.models.Election import Election
 
 from apps.frontend.serializers import VoterSerializer
-from apps.frontend.serializers import ElectionSerializer
 
 from Scripts.HelperMethods import get_ballot_by_queryset
+
 
 class VoterViewSet(viewsets.ModelViewSet):
     queryset = Voter.objects.all().order_by('user__username')

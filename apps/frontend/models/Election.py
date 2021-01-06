@@ -8,14 +8,16 @@ class Election(models.Model):
     ]
 
     ELECTION_TYPE_CHOICES = [
-        (0, 'Mayor'),
-        (1, 'City Counsel')
+        (0, 'City'),
+        (1, 'State'),
+        (2, 'National')
     ]
 
     name = models.CharField(max_length=100)
     date = models.DateField()
     description = models.TextField(max_length=250)
     location = models.ForeignKey('frontend.Location', on_delete=models.SET_NULL, blank=False, null=True)
+    type = models.SmallIntegerField(default=0, choices=ELECTION_TYPE_CHOICES)
     status = models.SmallIntegerField(default=1, choices=STATUS_CHOICE_FIELD)
 
     class Meta:
