@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
+
 
 class Candidate(models.Model):
 
@@ -15,10 +17,18 @@ class Candidate(models.Model):
     def __str__(self):
         return f'{self.user.username}'
 
-    def get_dict(self):
+    def get_dict(self, user):
+
+        try:
+            voter_match = VoterCandidateMatch.objects.filter(voter__user=user, candidate__pk=self.id). \
+                values_list('match_pct', flat=True)[0]
+        except VoterCandidateMatch.DoesNotExist:
+            pass
+
         return {
             'id': self.id,
             'user': self.user.username,
             'political_party': self.political_party.name,
-            'bio': self.bio
+            'bio': self.bio,
+            'voter_match': voter_match
         }

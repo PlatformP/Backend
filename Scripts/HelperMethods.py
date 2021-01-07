@@ -8,7 +8,7 @@ def date_time_converter(o):
         return o.__str__()
 
 
-def get_ballot_by_queryset(queryset, user):
+def get_ballot_by_queryset(queryset, user, voter_fav=False):
     """
     function that takes an election query set and returns a json of all the elections with their candiates
     :param queryset:
@@ -21,14 +21,8 @@ def get_ballot_by_queryset(queryset, user):
         candidate_list = []
 
         for candidate_q in instance.electioninline_set.all():
-            d = candidate_q.candidate.get_dict()
-
-            try:
-                voter_match = VoterCandidateMatch.objects.filter(voter__user=user, candidate__pk=d['id']). \
-                    values_list('match_pct', flat=True)[0]
-                d['voter_match'] = voter_match
-            except VoterCandidateMatch.DoesNotExist:
-                pass
+            d = candidate_q.candidate.get_dict(user=user)
             candidate_list.append(d)
-        instance_values[i].update({'Candidates': candidate_list})
+
+        instance_values[i].update({'candidates': candidate_list})
     return dumps(instance_values, indent=4, default=date_time_converter)
