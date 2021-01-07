@@ -15,7 +15,7 @@ class Candidate(models.Model):
         verbose_name_plural = 'Candidates'
 
     def __str__(self):
-        return f'{self.user.username}'
+        return f'{self.user.first_name} {self.user.last_name}'
 
     def get_dict(self, user):
 
@@ -28,6 +28,8 @@ class Candidate(models.Model):
         return {
             'id': self.id,
             'user': self.user.username,
+            'first_name': self.user.first_name,
+            'last_name': self.user.last_name,
             'political_party': self.political_party.name,
             'bio': self.bio,
             'voter_match': voter_match
