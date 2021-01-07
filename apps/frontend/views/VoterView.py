@@ -68,4 +68,4 @@ class VoterViewSet(viewsets.ModelViewSet):
 
         data = dumps(candidate_list, indent=4, default=date_time_converter)
 
-        Response(data=data, status=HTTP_200_OK)
+        return Response(data=data, status=HTTP_200_OK)
