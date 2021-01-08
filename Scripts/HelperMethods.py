@@ -22,6 +22,10 @@ def get_ballot_by_queryset(queryset, user, voter_fav=False):
 
         for candidate_q in instance.electioninline_set.all():
             d = candidate_q.candidate.get_dict(user=user)
+
+            if voter_fav:
+                d['status'] = candidate_q.status
+
             candidate_list.append(d)
 
         instance_values[i].update({'candidates': candidate_list})
