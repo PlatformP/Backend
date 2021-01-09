@@ -7,7 +7,7 @@ class PoliticalParty(models.Model):
         (1, 'Republican'),
         (2, 'Independent'),
         (3, 'Constitutional Party'),
-        (4, 'Libertarian')
+        (4, 'Libertarian'),
         (5, 'Green'),
         (6, 'No Affiliation'),
     ]
