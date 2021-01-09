@@ -40,7 +40,7 @@ class LocationAdmin(admin.ModelAdmin):
 
 class CandidateAdmin(admin.ModelAdmin):
     inlines = [PolicyInLine, ]
-    list_display = ['user', 'bio']
+    list_display = ['user', '__str__', 'bio', 'popularity', 'supporters']
 
 
 class VoterAdmin(admin.ModelAdmin):

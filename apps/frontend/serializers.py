@@ -12,111 +12,63 @@ from .models.PoliticalParty import PoliticalParty
 from django.contrib.auth.models import User
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['url', 'id', 'username']
+        fields = ['id', 'username']
 
 
-class CandidateSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.HyperlinkedRelatedField(
-        many=False,
-        view_name='user-detail',
-        queryset=User.objects.all()
-    )
-    political_party = serializers.HyperlinkedRelatedField(
-        many=False,
-        view_name='politicalparty-detail',
-        queryset=PoliticalParty.objects.all()
-    )
-
+class CandidateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Candidate
-        fields = ['url', 'id', 'user', 'bio', 'political_party']
+        fields = ['id', 'user', 'bio', 'political_party']
 
 
-class LocationSerializer(serializers.HyperlinkedModelSerializer):
+class LocationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Location
-        fields = ['url', 'id', 'city', 'state']
+        fields = ['id', 'city', 'state']
 
 
-class ElectionSerializer(serializers.HyperlinkedModelSerializer):
-    location = serializers.HyperlinkedRelatedField(
-        many=False,
-        view_name='location-detail',
-        queryset=Location.objects.all()
-    )
+class ElectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Election
-        fields = ['url','id', 'name', 'description', 'location', 'status', 'date']
+        fields = ['id', 'name', 'description', 'location', 'status', 'date']
         depth = 1
 
 
-class PolicySerializer(serializers.HyperlinkedModelSerializer):
-    candidate = serializers.HyperlinkedRelatedField(
-        many=False,
-        view_name='candidate-detail',
-        queryset=Candidate.objects.all()
-    )
+class PolicySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Policy
-        fields = ['url', 'id', 'description', 'candidate']
+        fields = ['id', 'description', 'candidate']
 
 
-class ElectionInLineSerializer(serializers.HyperlinkedModelSerializer):
-    '''
-    election = serializers.HyperlinkedRelatedField(
-        many=False,
-        view_name='election-detail',
-        queryset=Election.objects.all()
-    )
-    '''
-    '''
-    candidate = serializers.HyperlinkedRelatedField(
-        many=False,
-        view_name='candidate-detail',
-        queryset=Candidate.objects.all()
-    )
-    '''
+class ElectionInLineSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = ElectionInLine
-        fields = ['url', 'id', 'election_id', 'candidate']
+        fields = ['id', 'election_id', 'candidate']
         depth = 1
 
 
 class VoterSerializer(serializers.HyperlinkedModelSerializer):
-    user = serializers.HyperlinkedRelatedField(
-        many=False,
-        view_name='user-detail',
-        queryset=User.objects.all()
-    )
 
     class Meta:
         model = Voter
-        fields = ['url', 'id', 'user']
+        fields = ['id', 'user']
 
-class VoterFavElectionsSerializer(serializers.HyperlinkedModelSerializer):
-    election = serializers.HyperlinkedRelatedField(
-        many=False,
-        view_name='election-detail',
-        queryset=Election.objects.all()
-    )
 
-    voter = serializers.HyperlinkedRelatedField(
-        many=False,
-        view_name='voter-detail',
-        queryset=Voter.objects.all()
-    )
+class VoterFavElectionsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = VoterFavElections
         fields = ['url', 'id', 'election', 'voter']
 
 
-class PoliticalPartySerializer(serializers.HyperlinkedModelSerializer):
+class PoliticalPartySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = PoliticalParty
         fields = ['url', 'id', 'name']
