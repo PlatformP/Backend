@@ -30,7 +30,7 @@ class Candidate(models.Model):
             'user': self.user.username,
             'first_name': self.user.first_name,
             'last_name': self.user.last_name,
-            'political_party': self.political_party.name,
+            'political_party': self.political_party.get_color(),
             'bio': self.bio,
             'voter_match': voter_match
         }
