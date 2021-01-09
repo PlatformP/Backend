@@ -21,7 +21,10 @@ class PoliticalParty(models.Model):
     def __str__(self):
         return self.NAME_CHOICES[self.name][1]
 
-    def get_color(self):
+    def get_color_name(self):
         colors = ['blue', 'red', 'grey', 'orange', 'gold', 'green', None]
 
-        return colors[self.name]
+        return {
+            'party_color': colors[self.name],
+            'party': self.NAME_CHOICES[self.name][1]
+        }
