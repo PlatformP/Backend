@@ -22,17 +22,6 @@ class PoliticalParty(models.Model):
         return self.NAME_CHOICES[self.name][1]
 
     def get_color(self):
-        if self.name == 0:
-            return 'blue'
-        elif self.name == 1:
-            return 'red'
-        elif self.name == 2:
-            return 'grey'
-        elif self.name == 3:
-            return 'orange'
-        elif self.name == 4:
-            return 'gold'
-        elif self.name == 5:
-            return 'green'
-        else:
-            return None
+        colors = ['blue', 'red', 'grey', 'orange', 'gold', 'green', None]
+
+        return colors[self.name]
