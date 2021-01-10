@@ -15,8 +15,7 @@ def date_time_converter(o):
         return o.__str__()
 
 
-def get_ballot_by_queryset2(queryset, user):
-
+def get_candidate_df(candidate_ids, user):
     # getting the political party DF
     df_political_party_orig = DataFrame.from_records(PoliticalParty.objects.values())
     df_political_party = DataFrame(columns=['id', 'party', 'party_color'])
@@ -25,9 +24,6 @@ def get_ballot_by_queryset2(queryset, user):
     df_political_party['party_color'] = df_political_party_orig['name'].map(PoliticalParty.COLOR_DICT)
     df_political_party.set_index('id', inplace=True)
 
-    # getting Candidate DF
-    candidate_ids = set(ElectionInLine.objects.filter(election__pk__in=set(queryset.values_list('id', flat=True)))
-                        .values_list('candidate_id', flat=True))
     df_candidates = DataFrame.from_records(Candidate.objects.filter(id__in=candidate_ids).values())
     df_candidates['political_party_id'] = df_candidates['political_party_id'].map(df_political_party
                                                                                   .to_dict(orient='index'))
@@ -41,7 +37,6 @@ def get_ballot_by_queryset2(queryset, user):
     df_candidates['user_id'] = df_candidates['user_id'].map(df_user.to_dict(orient='index'))
     df_candidates.rename(columns={'political_party_id': 'political_party', 'user_id': 'user'}, inplace=True)
 
-    # getting the voter candidate_match df
     df_voter_candidate_match = DataFrame.from_records(VoterCandidateMatch.objects.filter(voter__user=user,
                                                                                          candidate__pk__in=candidate_ids
                                                                                          ).values('candidate_id',
@@ -49,6 +44,21 @@ def get_ballot_by_queryset2(queryset, user):
                                                                                                   'favorite'))
     df_voter_candidate_match.set_index('candidate_id', inplace=True)
     df_candidates['voter_match'] = df_candidates['id'].map(df_voter_candidate_match.to_dict(orient='index'))
+
+    return df_candidates
+
+
+def get_ballot_by_queryset2(queryset, user):
+    '''
+    function that gets a json of the ballot
+    :param queryset:
+    :param user:
+    :return:
+    '''
+    candidate_ids = set(ElectionInLine.objects.filter(election__pk__in=set(queryset.values_list('id', flat=True)))
+                        .values_list('candidate_id', flat=True))
+
+    df_candidates = get_candidate_df(candidate_ids=candidate_ids, user=user)
 
     df_election = DataFrame.from_records(queryset.values())
 
@@ -60,7 +70,11 @@ def get_ballot_by_queryset2(queryset, user):
 
     df_election.rename(columns={'location_id': 'location'}, inplace=True)
     df_candidates.set_index('id', inplace=True, drop=False)
-    df_election['candidates'] = df_election.apply(lambda x: df_candidates.loc[Election.objects.get(pk=x[0]).
-                                                  electioninline_set.values_list('candidate_id', flat=True)]
-                                                  .to_dict(orient='records'), axis=1)
+
+    def candidate_in_election(x):
+        return df_candidates.loc[Election.objects.get(pk=x).
+            electioninline_set.values_list('candidate_id', flat=True)].to_dict(orient='records')
+
+    df_election['candidates'] = df_election['id'].map(candidate_in_election)
+
     return df_election.to_json(orient='records')

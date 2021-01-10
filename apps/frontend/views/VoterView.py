@@ -8,11 +8,13 @@ from apps.frontend.models.VoterFavElections import VoterFavElections
 from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
 from apps.frontend.models.Election import Election
 from apps.frontend.models.Candidate import Candidate
+from django.contrib.auth.models import User
 
 from apps.frontend.serializers import VoterSerializer
 
 from json import dumps
-from Scripts.HelperMethods import date_time_converter, get_ballot_by_queryset2
+from Scripts.HelperMethods import date_time_converter, get_ballot_by_queryset2, get_candidate_df
+from pandas import DataFrame
 
 
 class VoterViewSet(viewsets.ModelViewSet):
@@ -32,10 +34,19 @@ class VoterViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['GET'], url_path='get_fav_candidate')
     def get_candidates(self, request):
 
-        candidate_list = []
+        #candidate_list = []
 
-        candidate_pk = VoterCandidateMatch.objects.filter(voter__user=request.user, favorite=True).values_list('candidate_id', flat=True)
-        queryset = Candidate.objects.filter(pk__in=candidate_pk)
+        candidate_pk = VoterCandidateMatch.objects.filter(voter__user=request.user, favorite=True).values_list(
+            'candidate_id', flat=True)
+        df_candidate = get_candidate_df(candidate_ids=candidate_pk, user=request.user)
+
+        def get_election_name_id_from_cand(x):
+            election_id = Candidate.objects.get(pk=x).electioninline_set.values_list('election_id', flat=True)[0]
+            df_election = DataFrame.from_records(Election.objects.filter(pk=election_id).values('id', 'name'))
+            return df_election.to_dict(orient='records')[0]
+
+        df_candidate['election'] = df_candidate['id'].map(get_election_name_id_from_cand)
+        '''
         for candidate in queryset:
 
             d = candidate.get_dict(request.user)
@@ -43,15 +54,16 @@ class VoterViewSet(viewsets.ModelViewSet):
             d['election_id'] = election.id
             d['election_name'] = election.name
             candidate_list.append(d)
-
-        data = dumps(candidate_list, indent=4, default=date_time_converter)
+        '''
+        data = df_candidate.to_json(orient='records')
 
         return Response(data=data, status=HTTP_200_OK)
 
     @action(detail=False, methods=['POST', 'GET'], url_path='toggle_fav/(?P<primary_key>[0-9]+)')
     def toggle_fav(self, request, primary_key):
         try:
-            voter_candidate_match_model = VoterCandidateMatch.objects.get(voter__user=request.user, candidate__pk=primary_key)
+            voter_candidate_match_model = VoterCandidateMatch.objects.get(voter__user=request.user,
+                                                                          candidate__pk=primary_key)
             voter_candidate_match_model.toggle_fav()
             return Response({}, status=HTTP_200_OK)
         except VoterCandidateMatch.DoesNotExist:
