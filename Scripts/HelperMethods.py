@@ -82,7 +82,7 @@ def get_ballot_by_queryset2(queryset, user):
     df_election['location_id'] = df_election['location_id'].map(df_location.to_dict(orient='index'))
     # df_election['candidate_ids'] = df_election.apply(lambda x: Election.objects.get(pk=x[0]).
     #                                                electioninline_set.values_list('candidate_id', flat=True), axis=1)
-
+    df_candidates.rename(columns={'location_id': 'location'}, inplace=True)
     df_candidates.set_index('id', inplace=True, drop=False)
     df_election['candidates'] = df_election.apply(lambda x: df_candidates.loc[Election.objects.get(pk=x[0]).
                                                  electioninline_set.values_list('candidate_id', flat=True)]
