@@ -12,7 +12,7 @@ from apps.frontend.models.Candidate import Candidate
 from apps.frontend.serializers import VoterSerializer
 
 from json import dumps
-from Scripts.HelperMethods import date_time_converter, get_ballot_by_queryset
+from Scripts.HelperMethods import date_time_converter, get_ballot_by_queryset2
 
 
 class VoterViewSet(viewsets.ModelViewSet):
@@ -26,7 +26,7 @@ class VoterViewSet(viewsets.ModelViewSet):
             voter__user=request.user). \
             values_list('election_id', flat=True)
         election_query = Election.objects.filter(pk__in=voter_fav_election_id)
-        data = get_ballot_by_queryset(queryset=election_query, user=request.user, voter_fav=True)
+        data = get_ballot_by_queryset2(queryset=election_query, user=request.user)
         return Response(data=data, status=HTTP_200_OK)
 
     @action(detail=False, methods=['GET'], url_path='get_fav_candidate')

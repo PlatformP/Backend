@@ -15,6 +15,9 @@ class ElectionInLine(models.Model):
     date_dropped = models.DateField(default=None, blank=True, null=True)
     status = models.SmallIntegerField(default=1, choices=STATUS_CHOICE_FIELD)
 
+    def __str__(self):
+        return f'{str(self.election)} - {str(self.candidate)}'
+
     def set_status(self, status):
         self.status = status
         self.save()
