@@ -10,6 +10,7 @@ from .models.VoterFavElections import VoterFavElections
 from .models.VoterCandidateMatch import VoterCandidateMatch
 from .models.PoliticalParty import PoliticalParty
 
+
 # Inlines
 class PolicyInLine(admin.TabularInline):
     model = Policy

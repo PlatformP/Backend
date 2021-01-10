@@ -22,10 +22,10 @@ class Candidate(models.Model):
     def get_dict(self, user):
 
         try:
-            voter_match = VoterCandidateMatch.objects.filter(voter__user=user, candidate__pk=self.id). \
-                values_list('match_pct', flat=True)[0]
+            voter_match, favorite = VoterCandidateMatch.objects.filter(voter__user=user, candidate__pk=self.id). \
+                values_list('match_pct', 'favorite')[0]
         except VoterCandidateMatch.DoesNotExist:
-            pass
+            voter_match, favorite = [None, None]
 
         return {
             'id': self.id,
@@ -35,6 +35,7 @@ class Candidate(models.Model):
             'political_party': self.political_party.get_color_name(),
             'bio': self.bio,
             'voter_match': voter_match,
+            'favorite': favorite,
             'popularity': self.popularity,
             'supporters': self.supporters
         }
