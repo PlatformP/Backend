@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Election(models.Model):
     STATUS_CHOICE_FIELD = [
         (1, 'Future'),
@@ -19,7 +20,7 @@ class Election(models.Model):
     type = models.SmallIntegerField(default=0, choices=ELECTION_TYPE_CHOICES)
     status = models.SmallIntegerField(default=1, choices=STATUS_CHOICE_FIELD)
 
-    #electionJSON = models.JSONField()
+    # electionJSON = models.JSONField()
 
     class Meta:
         verbose_name = 'Election'

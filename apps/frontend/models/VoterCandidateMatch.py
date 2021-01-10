@@ -13,3 +13,7 @@ class VoterCandidateMatch(models.Model):
 
     def __str__(self):
         return str(self.candidate)
+
+    def toggle_fav(self):
+        self.favorite = not self.favorite
+        self.save()

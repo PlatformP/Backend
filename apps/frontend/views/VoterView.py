@@ -1,6 +1,6 @@
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
 from rest_framework.response import Response
 
 from apps.frontend.models.Voter import Voter
@@ -47,3 +47,12 @@ class VoterViewSet(viewsets.ModelViewSet):
         data = dumps(candidate_list, indent=4, default=date_time_converter)
 
         return Response(data=data, status=HTTP_200_OK)
+
+    @action(detail=False, methods=['POST', 'GET'], url_path='toggle_fav/(?P<primary_key>[0-9]+)')
+    def toggle_fav(self, request, primary_key):
+        try:
+            voter_candidate_match_model = VoterCandidateMatch.objects.get(voter__user=request.user, candidate__pk=primary_key)
+            voter_candidate_match_model.toggle_fav()
+            return Response({}, status=HTTP_200_OK)
+        except VoterCandidateMatch.DoesNotExist:
+            return Response({}, status=HTTP_404_NOT_FOUND)
