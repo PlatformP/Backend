@@ -1,44 +1,21 @@
 from datetime import date
-from json import dumps
 from pandas import DataFrame
+
+from django.contrib.auth.models import User
+from apps.frontend.models.PoliticalParty import PoliticalParty
+from apps.frontend.models.ElectionInLine import ElectionInLine
+from apps.frontend.models.Election import Election
+from apps.frontend.models.Candidate import Candidate
+from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
+from apps.frontend.models.Location import Location
 
 
 def date_time_converter(o):
     if isinstance(o, date):
         return o.__str__()
 
-'''
-def get_ballot_by_queryset(queryset, user):
-    """
-    function that takes an election query set and returns a json of all the elections with their candiates
-    :param queryset:
-    :param user:
-    :return:
-    """
-    instance_values = list(queryset.values())
-
-    for i, instance in enumerate(queryset):
-        candidate_list = []
-
-        for candidate_q in instance.electioninline_set.all():
-            d = candidate_q.candidate.get_dict(user=user)
-
-            d['status'] = candidate_q.status
-
-            candidate_list.append(d)
-
-        instance_values[i].update({'candidates': candidate_list})
-    return dumps(instance_values, indent=4, default=date_time_converter)
-'''
 
 def get_ballot_by_queryset2(queryset, user):
-    from django.contrib.auth.models import User
-    from apps.frontend.models.PoliticalParty import PoliticalParty
-    from apps.frontend.models.ElectionInLine import ElectionInLine
-    from apps.frontend.models.Election import Election
-    from apps.frontend.models.Candidate import Candidate
-    from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
-    from apps.frontend.models.Location import Location
 
     # getting the political party DF
     df_political_party_orig = DataFrame.from_records(PoliticalParty.objects.values())
@@ -80,11 +57,10 @@ def get_ballot_by_queryset2(queryset, user):
     df_location.set_index('id', inplace=True)
 
     df_election['location_id'] = df_election['location_id'].map(df_location.to_dict(orient='index'))
-    # df_election['candidate_ids'] = df_election.apply(lambda x: Election.objects.get(pk=x[0]).
-    #                                                electioninline_set.values_list('candidate_id', flat=True), axis=1)
+
     df_election.rename(columns={'location_id': 'location'}, inplace=True)
     df_candidates.set_index('id', inplace=True, drop=False)
     df_election['candidates'] = df_election.apply(lambda x: df_candidates.loc[Election.objects.get(pk=x[0]).
-                                                 electioninline_set.values_list('candidate_id', flat=True)]
+                                                  electioninline_set.values_list('candidate_id', flat=True)]
                                                   .to_dict(orient='records'), axis=1)
     return df_election.to_json(orient='records')
