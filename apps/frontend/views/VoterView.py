@@ -30,8 +30,6 @@ class VoterViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['GET'], url_path='get_fav_candidate')
     def get_candidates(self, request):
 
-        #candidate_list = []
-
         candidate_pk = VoterCandidateMatch.objects.filter(voter__user=request.user, favorite=True).values_list(
             'candidate_id', flat=True)
         df_candidate = get_candidate_df(candidate_ids=candidate_pk, user=request.user)
@@ -42,15 +40,6 @@ class VoterViewSet(viewsets.ViewSet):
             return df_election.to_dict(orient='records')[0]
 
         df_candidate['election'] = df_candidate['id'].map(get_election_name_id_from_cand)
-        '''
-        for candidate in queryset:
-
-            d = candidate.get_dict(request.user)
-            election = candidate.electioninline_set.all()[0].election
-            d['election_id'] = election.id
-            d['election_name'] = election.name
-            candidate_list.append(d)
-        '''
         data = df_candidate.to_json(orient='records')
 
         return Response(data=data, status=HTTP_200_OK)
