@@ -36,7 +36,7 @@ class VoterViewSet(viewsets.ViewSet):
 
         def get_election_name_id_from_cand(x):
             election_id = Candidate.objects.get(pk=x).electioninline_set.values_list('election_id', flat=True)[0]
-            df_election = DataFrame.from_records(Election.objects.filter(pk=election_id).values('id', 'name'))
+            df_election = DataFrame.from_records(Election.objects.filter(pk=election_id).values('id', 'name', 'type'))
             return df_election.to_dict(orient='records')[0]
 
         df_candidate['election'] = df_candidate['id'].map(get_election_name_id_from_cand)
