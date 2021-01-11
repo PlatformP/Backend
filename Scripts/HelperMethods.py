@@ -48,7 +48,7 @@ def get_candidate_df(candidate_ids, user):
     return df_candidates
 
 
-def get_ballot_by_queryset2(queryset, user):
+def get_ballot_by_queryset(queryset, user):
     '''
     function that gets a json of the ballot
     :param queryset:

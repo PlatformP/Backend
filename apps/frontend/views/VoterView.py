@@ -1,4 +1,5 @@
 from rest_framework import viewsets
+
 from rest_framework.decorators import action
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND
 from rest_framework.response import Response
@@ -8,18 +9,13 @@ from apps.frontend.models.VoterFavElections import VoterFavElections
 from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
 from apps.frontend.models.Election import Election
 from apps.frontend.models.Candidate import Candidate
-from django.contrib.auth.models import User
 
-from apps.frontend.serializers import VoterSerializer
-
-from json import dumps
-from Scripts.HelperMethods import date_time_converter, get_ballot_by_queryset2, get_candidate_df
+from Scripts.HelperMethods import get_ballot_by_queryset, get_candidate_df
 from pandas import DataFrame
 
 
-class VoterViewSet(viewsets.ModelViewSet):
+class VoterViewSet(viewsets.ViewSet):
     queryset = Voter.objects.all().order_by('user__username')
-    serializer_class = VoterSerializer
 
     @action(detail=False, methods=['GET'], url_path='get_fav_election')
     def get_elections(self, request):
@@ -28,7 +24,7 @@ class VoterViewSet(viewsets.ModelViewSet):
             voter__user=request.user). \
             values_list('election_id', flat=True)
         election_query = Election.objects.filter(pk__in=voter_fav_election_id)
-        data = get_ballot_by_queryset2(queryset=election_query, user=request.user)
+        data = get_ballot_by_queryset(queryset=election_query, user=request.user)
         return Response(data=data, status=HTTP_200_OK)
 
     @action(detail=False, methods=['GET'], url_path='get_fav_candidate')
@@ -59,7 +55,7 @@ class VoterViewSet(viewsets.ModelViewSet):
 
         return Response(data=data, status=HTTP_200_OK)
 
-    @action(detail=False, methods=['POST', 'GET'], url_path='toggle_fav/(?P<primary_key>[0-9]+)')
+    @action(detail=False, methods=['PUT'], url_path='toggle_fav/(?P<primary_key>[0-9]+)')
     def toggle_fav(self, request, primary_key):
         try:
             voter_candidate_match_model = VoterCandidateMatch.objects.get(voter__user=request.user,
