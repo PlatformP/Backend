@@ -17,3 +17,7 @@ class VoterCandidateMatch(models.Model):
     def toggle_fav(self):
         self.favorite = not self.favorite
         self.save()
+
+    @staticmethod
+    def calculate_voter_match_score():
+        pass

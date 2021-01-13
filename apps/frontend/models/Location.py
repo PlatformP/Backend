@@ -2,6 +2,10 @@ from django.db import models
 
 
 class Location(models.Model):
+    STATE_CHOICES = [
+
+    ]
+
     city = models.CharField(max_length=50, blank=True, default=None, null=True)
     state = models.CharField(max_length=20, blank=False, default=None)
 

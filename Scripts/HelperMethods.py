@@ -1,14 +1,4 @@
 from datetime import date
-from pandas import DataFrame
-
-from django.contrib.auth.models import User
-from apps.frontend.models.PoliticalParty import PoliticalParty
-from apps.frontend.models.ElectionInLine import ElectionInLine
-from apps.frontend.models.Election import Election
-from apps.frontend.models.Candidate import Candidate
-from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
-from apps.frontend.models.Location import Location
-
 
 def date_time_converter(o):
     if isinstance(o, date):
@@ -16,7 +6,21 @@ def date_time_converter(o):
 
 
 def get_candidate_df(candidate_ids, user):
+    """
+    returns a DataFrame of all the Candidates with the appropriate coloumns filled in
+    :param candidate_ids: list of candidate id's
+    :param user: user instance with is used to find the the VoterCandidateMatch appropriate to the user
+    :return: DataFrame
+    """
+    from pandas import DataFrame
+
+    from django.contrib.auth.models import User
+    from apps.frontend.models.PoliticalParty import PoliticalParty
+    from apps.frontend.models.Candidate import Candidate
+    from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
+
     # getting the political party DF
+    # DataFrame has a name and color coloumn
     df_political_party_orig = DataFrame.from_records(PoliticalParty.objects.values())
     df_political_party = DataFrame(columns=['id', 'party', 'party_color'])
     df_political_party['id'] = df_political_party_orig['id']
@@ -29,6 +33,7 @@ def get_candidate_df(candidate_ids, user):
                                                                                   .to_dict(orient='index'))
 
     # getting User DF
+    # DataFrame with first_name and last_name as coloumns
     df_user = DataFrame.from_records(User.objects.filter(id__in=df_candidates['user_id'])
                                      .values('id', 'first_name', 'last_name'))
     df_user.set_index('id', inplace=True)
@@ -53,8 +58,15 @@ def get_ballot_by_queryset(queryset, user):
     function that gets a json of the ballot
     :param queryset:
     :param user:
-    :return:
+    :return: JSON of the dataframe of al elections
     '''
+
+    from pandas import DataFrame
+
+    from apps.frontend.models.ElectionInLine import ElectionInLine
+    from apps.frontend.models.Election import Election
+    from apps.frontend.models.Location import Location
+
     candidate_ids = set(ElectionInLine.objects.filter(election__pk__in=set(queryset.values_list('id', flat=True)))
                         .values_list('candidate_id', flat=True))
 
@@ -62,10 +74,12 @@ def get_ballot_by_queryset(queryset, user):
 
     df_election = DataFrame.from_records(queryset.values())
 
+    # getting the dataframe from the location
     location_ids = set(df_election['location_id'])
     df_location = DataFrame.from_records(Location.objects.filter(pk__in=location_ids).values())
     df_location.set_index('id', inplace=True)
 
+    #mapping the location primary key to the dict of the location
     df_election['location_id'] = df_election['location_id'].map(df_location.to_dict(orient='index'))
 
     df_election.rename(columns={'location_id': 'location'}, inplace=True)
@@ -78,3 +92,16 @@ def get_ballot_by_queryset(queryset, user):
     df_election['candidates'] = df_election['id'].map(candidate_in_election)
 
     return df_election.to_json(orient='records')
+
+
+def does_model_with_kwargs_exist_else_false(model, **kwargs):
+    """
+    :param model: Class of a django model
+    :param kwargs:
+    :return: model_instance or False if model_instance DNE
+    """
+    try:
+        model_instance = model.objects.get(**kwargs)
+        return model_instance
+    except model.DoesNotExist:
+        return False

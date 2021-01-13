@@ -2,4 +2,7 @@ from django.apps import AppConfig
 
 
 class FrontendConfig(AppConfig):
-    name = 'frontend'
+    name = 'apps.frontend'
+
+    def ready(self):
+        import apps.frontend.signals
