@@ -1,4 +1,8 @@
 from datetime import date
+from pandas import DataFrame
+
+from apps.frontend.models.Location import Location
+
 
 def date_time_converter(o):
     if isinstance(o, date):
@@ -12,7 +16,6 @@ def get_candidate_df(candidate_ids, user):
     :param user: user instance with is used to find the the VoterCandidateMatch appropriate to the user
     :return: DataFrame
     """
-    from pandas import DataFrame
 
     from django.contrib.auth.models import User
     from apps.frontend.models.PoliticalParty import PoliticalParty
@@ -61,11 +64,8 @@ def get_ballot_by_queryset(queryset, user):
     :return: JSON of the dataframe of al elections
     '''
 
-    from pandas import DataFrame
-
     from apps.frontend.models.ElectionInLine import ElectionInLine
     from apps.frontend.models.Election import Election
-    from apps.frontend.models.Location import Location
 
     candidate_ids = set(ElectionInLine.objects.filter(election__pk__in=set(queryset.values_list('id', flat=True)))
                         .values_list('candidate_id', flat=True))
@@ -79,7 +79,7 @@ def get_ballot_by_queryset(queryset, user):
     df_location = DataFrame.from_records(Location.objects.filter(pk__in=location_ids).values())
     df_location.set_index('id', inplace=True)
 
-    #mapping the location primary key to the dict of the location
+    # mapping the location primary key to the dict of the location
     df_election['location_id'] = df_election['location_id'].map(df_location.to_dict(orient='index'))
 
     df_election.rename(columns={'location_id': 'location'}, inplace=True)
@@ -105,3 +105,10 @@ def does_model_with_kwargs_exist_else_false(model, **kwargs):
         return model_instance
     except model.DoesNotExist:
         return False
+
+
+def get_key_from_state(state_code):
+    from numpy import array, where
+
+    state_array = array(list(Location.STATE_CHOICES))
+    return where(state_array == state_code)[0][0]

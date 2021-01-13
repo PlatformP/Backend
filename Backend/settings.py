@@ -190,3 +190,8 @@ EMAIL_PORT = config.get('email', 'EMAIL_PORT')
 
 ## URL PATHS
 BASE_URL = 'www.grassrootusa.com'
+
+
+## GEO config
+import pgeocode as pg
+US_GEO_CONFIG = pg.Nominatim('US')

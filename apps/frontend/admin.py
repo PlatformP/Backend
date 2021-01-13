@@ -9,6 +9,7 @@ from .models.Voter import Voter
 from .models.VoterFavElections import VoterFavElections
 from .models.VoterCandidateMatch import VoterCandidateMatch
 from .models.PoliticalParty import PoliticalParty
+from .models.ZipCode import ZipCode
 
 
 # Inlines
@@ -53,8 +54,13 @@ class Political_PartyAdmin(admin.ModelAdmin):
     list_display = ['name', 'logo']
 
 
+class ZipCodeAdmin(admin.ModelAdmin):
+    list_display = ['zipcode']
+
+
 admin.site.register(Candidate, CandidateAdmin)
 admin.site.register(Election, ElectionAdmin)
 admin.site.register(Location, LocationAdmin)
 admin.site.register(Voter, VoterAdmin)
 admin.site.register(PoliticalParty, Political_PartyAdmin)
+admin.site.register(ZipCode, ZipCodeAdmin)
