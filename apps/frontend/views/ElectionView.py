@@ -18,7 +18,6 @@ class ElectionViewSet(viewsets.ViewSet):
     def get_ballot(self, request):
         voter_zip_code = Voter.objects.get(user=request.user).zipcode.zipcode
 
-        print(type(voter_zip_code))
         location_df = US_GEO_CONFIG.query_postal_code(voter_zip_code)
 
         national_elections = Election.objects.filter(type=2)
