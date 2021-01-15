@@ -12,6 +12,7 @@ class Location(models.Model):
     ]
 
     city = models.CharField(max_length=50, blank=True, default=None, null=True)
+    county = models.CharField(max_length=50, blank=True, default=None, null=True)
     state = models.SmallIntegerField(default=0, choices=STATE_CHOICES)
 
     class Meta:

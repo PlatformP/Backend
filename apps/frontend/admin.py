@@ -33,7 +33,7 @@ class VoterCandidateMatchInLine(admin.TabularInline):
 class ElectionAdmin(admin.ModelAdmin):
     inlines = [ElectionInLine, ]
     ordering = ('-date',)
-    list_display = ['name', 'status']
+    list_display = ['name', 'type', 'location']
 
 
 class LocationAdmin(admin.ModelAdmin):

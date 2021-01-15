@@ -9,8 +9,9 @@ class Election(models.Model):
 
     ELECTION_TYPE_CHOICES = [
         (0, 'City'),
-        (1, 'State'),
-        (2, 'National')
+        (1, 'County'),
+        (2, 'State'),
+        (3, 'National')
     ]
 
     name = models.CharField(max_length=100)
@@ -29,4 +30,8 @@ class Election(models.Model):
 
     def set_status_past(self):
         self.status = 0
+        self.save()
+
+    def set_type(self, type):
+        self.type = type
         self.save()
