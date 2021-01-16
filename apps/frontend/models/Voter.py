@@ -16,4 +16,4 @@ class Voter(models.Model):
     age = models.PositiveSmallIntegerField(default=None, blank=True, null=True)
 
     def __str__(self):
-        return f'{self.user.username}'
+        return f'{self.user.first_name} {self.user.last_name}'
