@@ -31,10 +31,5 @@ class PoliticalParty(models.Model):
     def __str__(self):
         return self.NAME_CHOICES[self.name][1]
 
-    def get_color_name(self):
-        colors = ['blue', 'red', 'grey', 'orange', 'gold', 'green', None]
-
-        return {
-            'party_color': colors[self.name],
-            'party': self.NAME_CHOICES[self.name][1]
-        }
+    def get_image_path(self):
+        return self.logo.path

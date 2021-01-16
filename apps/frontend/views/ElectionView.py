@@ -12,7 +12,8 @@ from Scripts.HelperMethods import get_ballot_by_queryset, get_key_from_state
 
 
 class ElectionViewSet(viewsets.ViewSet):
-    queryset = Election.objects.all().order_by('name')
+    queryset = Election.objects.all().order_by('-date')
+
 
     @action(['GET'], detail=False, url_path='ballot')
     def get_ballot(self, request):
@@ -20,10 +21,10 @@ class ElectionViewSet(viewsets.ViewSet):
 
         location_df = US_GEO_CONFIG.query_postal_code(voter_zip_code)
 
-        national_elections = Election.objects.filter(type=3)
-        state_elections = Election.objects.filter(location__state=get_key_from_state(location_df.state_code), type=2)
-        county_elections = Election.objects.filter(location__county=location_df.county_name, type=1)
-        city_elections = Election.objects.filter(location__city=location_df.place_name, type=0)
+        national_elections = Election.objects.filter(type=3).oder_by('-date')
+        state_elections = Election.objects.filter(location__state=get_key_from_state(location_df.state_code), type=2).order_by('-date')
+        county_elections = Election.objects.filter(location__county=location_df.county_name, type=1).order_by('-date')
+        city_elections = Election.objects.filter(location__city=location_df.place_name, type=0).order_by('-date')
         instance_query = national_elections | state_elections | county_elections | city_elections
 
         data = get_ballot_by_queryset(queryset=instance_query, user=request.user)

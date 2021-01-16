@@ -9,13 +9,16 @@ from apps.frontend.models.VoterFavElections import VoterFavElections
 from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
 from apps.frontend.models.Election import Election
 from apps.frontend.models.Candidate import Candidate
+from django.contrib.auth.models import User
 
-from Scripts.HelperMethods import get_ballot_by_queryset, get_candidate_df, does_model_with_kwargs_exist_else_false
+from Scripts.HelperMethods import get_ballot_by_queryset, get_candidate_df, get_model_with_kwargs_else_false, \
+    get_model_df_with_kwargs_else_false
 from pandas import DataFrame
 
 
 class VoterViewSet(viewsets.ViewSet):
-    queryset = Voter.objects.all().order_by('user__username')
+    queryset = Voter.objects.all()
+
 
     @action(detail=False, methods=['GET'], url_path='get_fav_election')
     def get_elections(self, request):
@@ -76,9 +79,9 @@ class VoterViewSet(viewsets.ViewSet):
         :param primary_key:
         :return:
         """
-        if voter_fav_election := does_model_with_kwargs_exist_else_false(VoterFavElections,
-                                                                         voter__user=request.user,
-                                                                         election__id=primary_key):
+        if voter_fav_election := get_model_with_kwargs_else_false(VoterFavElections,
+                                                                  voter__user=request.user,
+                                                                  election__id=primary_key):
             voter_fav_election.delete()
             return Response({'deleted': True}, status=HTTP_200_OK)
         else:
@@ -87,4 +90,22 @@ class VoterViewSet(viewsets.ViewSet):
             VoterFavElections.objects.create(voter=voter, election=election)
 
             return Response({'created': True}, status=HTTP_200_OK)
+        return Response({}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=['POST'], url_path='edit_profile')
+    def edit_profile(self, request):
+        if voter := get_model_with_kwargs_else_false(Voter, user=request.user):
+            pass
+        else:
+            pass
+
+    @action(detail=False, methods=['GET'], url_path='get_profile')
+    def get_profile(self, request):
+        if voter_df := get_model_df_with_kwargs_else_false(Voter, 'id', 'zipcode__zipcode', 'user__first_name',
+                                                           'user__last_name', 'gender', 'age', user=request.user):
+            voter_df.rename(columns={'zipcode__zipcode': 'zipcode', 'user__first_name': 'first_name',
+                                     'user__last_name': 'last_name'}, inplace=True)
+            return Response(voter_df.to_json(orient='index'), status=HTTP_200_OK)
+        else:
+            return Response({}, status=HTTP_404_NOT_FOUND)
         return Response({}, status=HTTP_500_INTERNAL_SERVER_ERROR)

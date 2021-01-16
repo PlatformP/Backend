@@ -94,7 +94,7 @@ def get_ballot_by_queryset(queryset, user):
     return df_election.to_json(orient='records')
 
 
-def does_model_with_kwargs_exist_else_false(model, **kwargs):
+def get_model_with_kwargs_else_false(model, **kwargs):
     """
     :param model: Class of a django model
     :param kwargs:
@@ -107,8 +107,15 @@ def does_model_with_kwargs_exist_else_false(model, **kwargs):
         return False
 
 
+def get_model_df_with_kwargs_else_false(model, *args, **kwargs):
+    try:
+        df = DataFrame.from_records(model.objects.filter(**kwargs).values(*args))
+        return df
+    except model.DoesNotExist:
+        return False
+
+
 def get_key_from_state(state_code):
     from numpy import array, where
-
     state_array = array(list(Location.STATE_CHOICES))
     return where(state_array == state_code)[0][0]
