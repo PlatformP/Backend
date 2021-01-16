@@ -9,7 +9,6 @@ from apps.frontend.models.VoterFavElections import VoterFavElections
 from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
 from apps.frontend.models.Election import Election
 from apps.frontend.models.Candidate import Candidate
-from django.contrib.auth.models import User
 
 from Scripts.HelperMethods import get_ballot_by_queryset, get_candidate_df, get_model_with_kwargs_else_false, \
     get_model_df_with_kwargs_else_false
@@ -105,7 +104,7 @@ class VoterViewSet(viewsets.ViewSet):
         if type(voter_df) == DataFrame:
             voter_df.rename(columns={'zipcode__zipcode': 'zipcode', 'user__first_name': 'first_name',
                                      'user__last_name': 'last_name'}, inplace=True)
-            return Response(voter_df.to_json(orient='index'), status=HTTP_200_OK)
+            return Response(voter_df.to_json(orient='records'), status=HTTP_200_OK)
         else:
             return Response({}, status=HTTP_404_NOT_FOUND)
         return Response({}, status=HTTP_500_INTERNAL_SERVER_ERROR)
