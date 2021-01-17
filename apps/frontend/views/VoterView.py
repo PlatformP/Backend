@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 
 from rest_framework.decorators import action
-from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR
+from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR, HTTP_204_NO_CONTENT
 from rest_framework.response import Response
 
 from apps.frontend.models.Voter import Voter
@@ -9,9 +9,10 @@ from apps.frontend.models.VoterFavElections import VoterFavElections
 from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
 from apps.frontend.models.Election import Election
 from apps.frontend.models.Candidate import Candidate
+from apps.frontend.models.ZipCode import ZipCode
 
 from Scripts.HelperMethods import get_ballot_by_queryset, get_candidate_df, get_model_with_kwargs_else_false, \
-    get_model_df_with_kwargs_else_false
+    get_model_df_with_kwargs_else_false, update_model_instance_from_post
 from pandas import DataFrame
 
 
@@ -65,7 +66,7 @@ class VoterViewSet(viewsets.ViewSet):
             voter_candidate_match_model = VoterCandidateMatch.objects.get(voter__user=request.user,
                                                                           candidate__pk=primary_key)
             voter_candidate_match_model.toggle_fav()
-            return Response({}, status=HTTP_200_OK)
+            return Response({}, status=HTTP_204_NO_CONTENT)
         except VoterCandidateMatch.DoesNotExist:
             return Response({}, status=HTTP_404_NOT_FOUND)
 
@@ -90,12 +91,24 @@ class VoterViewSet(viewsets.ViewSet):
             return Response({'created': True}, status=HTTP_200_OK)
         return Response({}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=False, methods=['POST'], url_path='edit_profile')
+    @action(detail=False, methods=['POST', 'PUT'], url_path='edit_profile')
     def edit_profile(self, request):
-        if voter := get_model_with_kwargs_else_false(Voter, user=request.user):
-            pass
+        '''
+        Method for creating and editing profiles
+        if editing then PUT must be used as a method
+        :param request:
+        :return:
+        '''
+        if voter := get_model_with_kwargs_else_false(Voter, user=request.user) and request.method == 'PUT':
+            update_model_instance_from_post(voter, request.data)
+            return Response({}, status=HTTP_204_NO_CONTENT)
         else:
-            pass
+            print(request.data)
+            request.data['user'] = request.user
+            request.data['zipcode'] = ZipCode.objects.get_or_create(zipcode=request.data['zipcode'])[0]
+            Voter.objects.create(**request.data)
+            return Response({}, status=HTTP_204_NO_CONTENT)
+        return Response({}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=False, methods=['GET'], url_path='get_profile')
     def get_profile(self, request):

@@ -107,6 +107,12 @@ def get_model_with_kwargs_else_false(model, **kwargs):
         return False
 
 
+def update_model_instance_from_post(model_instance, kwargs):
+    for key, value in kwargs.items():
+        setattr(model_instance, key, value)
+    model_instance.save()
+
+
 def get_model_df_with_kwargs_else_false(model, *args, **kwargs):
     try:
         df = DataFrame.from_records(model.objects.filter(**kwargs).values(*args))
