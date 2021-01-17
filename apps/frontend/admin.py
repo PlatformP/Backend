@@ -47,7 +47,7 @@ class CandidateAdmin(admin.ModelAdmin):
 
 class VoterAdmin(admin.ModelAdmin):
     inlines = (Voter_FavElections_Inline, VoterCandidateMatchInLine)
-    list_display = ['user']
+    list_display = ['user', '__str__']
 
 
 class Political_PartyAdmin(admin.ModelAdmin):
