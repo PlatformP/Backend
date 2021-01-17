@@ -103,10 +103,13 @@ class VoterViewSet(viewsets.ViewSet):
             update_model_instance_from_post(voter, request.data)
             return Response({}, status=HTTP_204_NO_CONTENT)
         else:
-            print(request.data)
-            request.data['user'] = request.user
-            request.data['zipcode'] = ZipCode.objects.get_or_create(zipcode=request.data['zipcode'])[0]
-            Voter.objects.create(**request.data)
+            data = {}
+            for key, value in request.data.items():
+                data[key] = value
+            print(data)
+            data['user'] = request.user
+            data['zipcode'] = ZipCode.objects.get_or_create(zipcode=request.data['zipcode'])[0]
+            Voter.objects.create(**data)
             return Response({}, status=HTTP_204_NO_CONTENT)
         return Response({}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
