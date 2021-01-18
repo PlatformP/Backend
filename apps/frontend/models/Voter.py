@@ -13,7 +13,8 @@ class Voter(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     zipcode = models.ForeignKey('ZipCode', on_delete=models.SET_NULL, null=True)
     gender = models.SmallIntegerField(default=0, choices=GENDER_CHOICES)
-    age = models.PositiveSmallIntegerField(default=None, blank=True, null=True)
+
+    dob = models.DateField(default=None, null=True)
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
