@@ -10,6 +10,8 @@ from .models.VoterFavElections import VoterFavElections
 from .models.VoterCandidateMatch import VoterCandidateMatch
 from .models.PoliticalParty import PoliticalParty
 from .models.ZipCode import ZipCode
+from .models.SurveyQuestion import SurveyQuestion
+from .models.SurveyQuestionInLine import SurveyQuestionInLine
 
 
 # Inlines
@@ -29,6 +31,10 @@ class VoterCandidateMatchInLine(admin.TabularInline):
     model = VoterCandidateMatch
 
 
+class SurveyQuestionInLine(admin.TabularInline):
+    model = SurveyQuestionInLine
+
+
 # models
 class ElectionAdmin(admin.ModelAdmin):
     inlines = [ElectionInLine, ]
@@ -41,12 +47,12 @@ class LocationAdmin(admin.ModelAdmin):
 
 
 class CandidateAdmin(admin.ModelAdmin):
-    inlines = [PolicyInLine, ]
+    inlines = [PolicyInLine, SurveyQuestionInLine]
     list_display = ['user', '__str__', 'bio', 'popularity', 'supporters']
 
 
 class VoterAdmin(admin.ModelAdmin):
-    inlines = (Voter_FavElections_Inline, VoterCandidateMatchInLine)
+    inlines = (Voter_FavElections_Inline, VoterCandidateMatchInLine, SurveyQuestionInLine)
     list_display = ['user', '__str__']
 
 
@@ -58,9 +64,14 @@ class ZipCodeAdmin(admin.ModelAdmin):
     list_display = ['zipcode']
 
 
+class SurveyQuestionAdmin(admin.ModelAdmin):
+    list_display = ['__str__']
+
+
 admin.site.register(Candidate, CandidateAdmin)
 admin.site.register(Election, ElectionAdmin)
 admin.site.register(Location, LocationAdmin)
 admin.site.register(Voter, VoterAdmin)
 admin.site.register(PoliticalParty, Political_PartyAdmin)
 admin.site.register(ZipCode, ZipCodeAdmin)
+admin.site.register(SurveyQuestion, SurveyQuestionAdmin)

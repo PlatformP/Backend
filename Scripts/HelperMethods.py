@@ -109,8 +109,7 @@ def get_model_with_kwargs_else_false(model, **kwargs):
 
 def update_model_instance_from_post(model_instance, kwargs):
     for key, value in kwargs.items():
-        if value != "":
-            setattr(model_instance, key, value)
+        setattr(model_instance, key, value)
     model_instance.save()
 
 
