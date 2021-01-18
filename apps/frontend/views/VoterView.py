@@ -99,7 +99,7 @@ class VoterViewSet(viewsets.ViewSet):
         :param request:
         :return:
         '''
-        if voter := get_model_with_kwargs_else_false(Voter, user=request.user) and request.method == 'PUT':
+        if voter := get_model_with_kwargs_else_false(Voter, user=request.user):
             update_model_instance_from_post(voter, request.data)
             return Response({}, status=HTTP_204_NO_CONTENT)
         else:
