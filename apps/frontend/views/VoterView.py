@@ -120,7 +120,7 @@ class VoterViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['GET'], url_path='get_profile')
     def get_profile(self, request):
         voter_df = get_model_df_with_kwargs_else_false(Voter, 'id', 'zipcode__zipcode', 'user__first_name',
-                                                       'user__last_name', 'gender', 'age', user=request.user)
+                                                       'user__last_name', 'gender', 'dob', user=request.user)
         if type(voter_df) == DataFrame:
             voter_df.rename(columns={'zipcode__zipcode': 'zipcode', 'user__first_name': 'first_name',
                                      'user__last_name': 'last_name'}, inplace=True)
