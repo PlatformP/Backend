@@ -101,6 +101,7 @@ class VoterViewSet(viewsets.ViewSet):
         '''
         if voter := get_model_with_kwargs_else_false(Voter, user=request.user):
             data = dict(request.data)
+            update_model_instance_from_post(request.user, data['user'])
             data['zipcode'] = ZipCode.objects.get_or_create(zipcode=data['zipcode'])[0]
             update_model_instance_from_post(voter, data)
             return Response({}, status=HTTP_204_NO_CONTENT)
