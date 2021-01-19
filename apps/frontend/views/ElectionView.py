@@ -16,9 +16,13 @@ class ElectionViewSet(viewsets.ViewSet):
 
     @action(['GET'], detail=False, url_path='ballot')
     def get_ballot(self, request):
+        '''
+        returns the results for the ballot page. -> all the elections that are appropriate for the users zip code
+        :param request:
+        :return:
+        '''
+
         voter_zip_code = Voter.objects.get(user=request.user).zipcode
-
-
 
         national_elections = Election.objects.filter(type=3)
         state_elections = Election.objects.filter(location__state=voter_zip_code.state_key,
