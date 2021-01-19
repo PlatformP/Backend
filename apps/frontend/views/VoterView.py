@@ -19,6 +19,26 @@ from pandas import DataFrame
 class VoterViewSet(viewsets.ViewSet):
     queryset = Voter.objects.all()
 
+    @action(['GET'], detail=False, url_path='ballot')
+    def get_ballot(self, request):
+        '''
+        returns the results for the ballot page. -> all the elections that are appropriate for the users zip code
+        :param request:
+        :return:
+        '''
+
+        voter_zip_code = Voter.objects.get(user=request.user).zipcode
+
+        national_elections = Election.objects.filter(type=3)
+        state_elections = Election.objects.filter(location__state=voter_zip_code.state_key,
+                                                  type=2)
+        county_elections = Election.objects.filter(location__county=voter_zip_code.county_name, type=1)
+        city_elections = Election.objects.filter(location__city=voter_zip_code.place_name, type=0)
+        instance_query = national_elections | state_elections | county_elections | city_elections
+
+        data = get_ballot_by_queryset(queryset=instance_query, user=request.user)
+        return Response(data=data, status=HTTP_200_OK)
+
     @action(detail=False, methods=['GET'], url_path='get_fav_election')
     def get_elections(self, request):
         """
