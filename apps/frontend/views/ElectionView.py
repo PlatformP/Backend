@@ -16,15 +16,15 @@ class ElectionViewSet(viewsets.ViewSet):
 
     @action(['GET'], detail=False, url_path='ballot')
     def get_ballot(self, request):
-        voter_zip_code = Voter.objects.get(user=request.user).zipcode.zipcode
+        voter_zip_code = Voter.objects.get(user=request.user).zipcode
 
-        location_df = US_GEO_CONFIG.query_postal_code(voter_zip_code)
+
 
         national_elections = Election.objects.filter(type=3)
-        state_elections = Election.objects.filter(location__state=get_key_from_state(location_df.state_code),
+        state_elections = Election.objects.filter(location__state=voter_zip_code.state_key,
                                                   type=2)
-        county_elections = Election.objects.filter(location__county=location_df.county_name, type=1)
-        city_elections = Election.objects.filter(location__city=location_df.place_name, type=0)
+        county_elections = Election.objects.filter(location__county=voter_zip_code.county_name, type=1)
+        city_elections = Election.objects.filter(location__city=voter_zip_code.place_name, type=0)
         instance_query = national_elections | state_elections | county_elections | city_elections
 
         data = get_ballot_by_queryset(queryset=instance_query, user=request.user)

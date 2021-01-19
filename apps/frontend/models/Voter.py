@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
+from datetime import date as dt
 class Voter(models.Model):
 
     GENDER_CHOICES = [
@@ -18,3 +18,13 @@ class Voter(models.Model):
 
     def __str__(self):
         return f'{self.user.first_name} {self.user.last_name}'
+
+    def save(self, *args, **kwargs):
+        '''
+        making sure the dob is the right format
+        otherwise making it a datetime object
+        '''
+        if type(self.dob) == str:
+            self.dob = dt.fromtimestamp(int(self.dob))
+
+        super(Voter, self).save(*args, **kwargs)

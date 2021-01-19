@@ -10,4 +10,5 @@ from Scripts.utils.MediaFiles import delete_picture
 @receiver(signal=post_delete, sender=PoliticalParty)
 @receiver(signal=post_delete, sender=Candidate)
 def delete_photo_on_delete(instance, **kwargs):
-    delete_picture(instance.get_image_path())
+    if path := instance.get_image_path:
+        delete_picture(path)

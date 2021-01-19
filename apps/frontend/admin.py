@@ -61,7 +61,9 @@ class Political_PartyAdmin(admin.ModelAdmin):
 
 
 class ZipCodeAdmin(admin.ModelAdmin):
-    list_display = ['zipcode']
+    list_display = ['zipcode', 'place_name', 'state_name']
+    readonly_fields = ['country_code', 'place_name', 'state_name', 'state_name', 'state_code',
+                       'state_key', 'county_name', 'county_code']
 
 
 class SurveyQuestionAdmin(admin.ModelAdmin):

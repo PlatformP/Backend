@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 
 
 class Candidate(models.Model):
-
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     political_party = models.ForeignKey('PoliticalParty', on_delete=models.SET_NULL, null=True)
 
@@ -20,4 +19,7 @@ class Candidate(models.Model):
         return f'{self.user.first_name} {self.user.last_name}'
 
     def get_image_path(self):
-        return self.profile_picture.path
+        try:
+            return self.profile_picture.path
+        except ValueError:
+            return False
