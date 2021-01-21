@@ -48,7 +48,7 @@ class LocationAdmin(admin.ModelAdmin):
 
 class CandidateAdmin(admin.ModelAdmin):
     inlines = [PolicyInLine, SurveyQuestionInLine]
-    list_display = ['user', '__str__', 'bio', 'popularity', 'supporters']
+    list_display = ['user', '__str__', 'bio', 'popularity', 'supporters', 'protesters']
 
 
 class VoterAdmin(admin.ModelAdmin):

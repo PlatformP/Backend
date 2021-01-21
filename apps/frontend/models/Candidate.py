@@ -10,6 +10,7 @@ class Candidate(models.Model):
     bio = models.TextField(default=None, null=True)
     popularity = models.FloatField(default=None, null=True, blank=True)
     supporters = models.IntegerField(default=None, null=True, blank=True)
+    protesters = models.IntegerField(default=None, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Candidates'
