@@ -49,7 +49,9 @@ def get_candidate_df(candidate_ids, user):
                                                                                          candidate__pk__in=candidate_ids
                                                                                          ).values('candidate_id',
                                                                                                   'match_pct',
-                                                                                                  'favorite'))
+                                                                                                  'favorite',
+                                                                                                  'support',
+                                                                                                  'protest'))
     df_voter_candidate_match.set_index('candidate_id', inplace=True)
     df_candidates['voter_match'] = df_candidates['id'].map(df_voter_candidate_match.to_dict(orient='index'))
 
