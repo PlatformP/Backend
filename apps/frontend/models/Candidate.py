@@ -12,6 +12,8 @@ class Candidate(models.Model):
     supporters = models.IntegerField(default=None, null=True, blank=True)
     protesters = models.IntegerField(default=None, null=True, blank=True)
 
+    #protestor_supporter_df = models.JSONField()
+
     class Meta:
         verbose_name = 'Candidates'
         verbose_name_plural = 'Candidates'
@@ -24,3 +26,11 @@ class Candidate(models.Model):
             return self.profile_picture.path
         except ValueError:
             return False
+
+    def toggle_supporter(self, operation):
+        self.supporters = self.supporters + 1 if operation == '+' else self.supporters - 1
+        self.save()
+
+    def toggle_protester(self, operation):
+        self.protesters = self.protesters + 1 if operation == '+' else self.protesters - 1
+        self.save()

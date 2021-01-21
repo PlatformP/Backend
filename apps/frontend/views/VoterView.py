@@ -121,12 +121,11 @@ class VoterViewSet(viewsets.ViewSet):
         '''
         if voter := get_model_with_kwargs_else_false(Voter, user=request.user):
             data = dict(request.data)
-            update_model_instance_from_post(request.user, data['user'])
-            del data['user']
-            data['zipcode'] = ZipCode.objects.get_or_create(zipcode=data['zipcode'])[0]
-            update_model_instance_from_post(voter, data)
+            data['request_user'] = request.user
+            voter.update_with_kwargs(**data)
             return Response({}, status=HTTP_204_NO_CONTENT)
         else:
+            #TODO: HAS TO BE TESTED
             data = {}
             for key, value in request.data.items():
                 data[key] = value
@@ -148,3 +147,25 @@ class VoterViewSet(viewsets.ViewSet):
         else:
             return Response({}, status=HTTP_404_NOT_FOUND)
         return Response({}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=['PUT'], url_path='toggle_support_candidate/(?P<primary_key>[0-9]+)')
+    def toggle_candidate_support(self, request, primary_key):
+        """
+        toggles the support
+        :param primary_key: pk of the candidate
+        :return: 204 if successfully
+        """
+        voter_candidate_match = VoterCandidateMatch.objects.get(voter__user=request.user, candidate__id=primary_key)
+        voter_candidate_match.toggle_support()
+        return Response({}, status=HTTP_204_NO_CONTENT)
+
+    @action(detail=False, methods=['PUT'], url_path='toggle_protest_candidate/(?P<primary_key>[0-9]+)')
+    def toggle_candidate_protest(self, request, primary_key):
+        """
+        toggles the protest
+        :param primary_key: pk of the candidate
+        :return: 204 if successfully
+        """
+        voter_candidate_match = VoterCandidateMatch.objects.get(voter__user=request.user, candidate__id=primary_key)
+        voter_candidate_match.toggle_protest()
+        return Response({}, status=HTTP_204_NO_CONTENT)
