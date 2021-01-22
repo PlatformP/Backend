@@ -1,11 +1,13 @@
 from django.urls import include, path
 from rest_framework import routers
 from .views.ElectionView import ElectionViewSet
+from .views.CandidateViewSet import CandidateViewSet
 from .views.VoterView import VoterViewSet
 
 router = routers.DefaultRouter()
 router.register(r'Election', ElectionViewSet)
 router.register(r'Voter', VoterViewSet)
+router.register(r'Candidate', CandidateViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
