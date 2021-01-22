@@ -1,5 +1,7 @@
 from django.db import models
 
+from pandas import DataFrame
+
 
 class PoliticalParty(models.Model):
     NAME_CHOICES = [
@@ -22,7 +24,7 @@ class PoliticalParty(models.Model):
         6: 'silver'
     }
 
-    name = models.SmallIntegerField(default= 6, choices=NAME_CHOICES)
+    name = models.SmallIntegerField(default=6, choices=NAME_CHOICES)
     logo = models.ImageField(upload_to='party_logo', null=True)
 
     class Meta:
@@ -33,3 +35,14 @@ class PoliticalParty(models.Model):
 
     def get_image_path(self):
         return self.logo.path
+
+    def get_df(self) -> DataFrame:
+        """
+        gets the df
+        :return:
+        """
+        df_political_party = DataFrame.from_dict(data={'id': self.id,
+                                                       'party': self.NAME_CHOICES[self.name][-1],
+                                                       'party_color': self.COLOR_DICT[self.name]}, orient='index').T
+        df_political_party.set_index('id', inplace=True)
+        return df_political_party
