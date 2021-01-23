@@ -48,7 +48,7 @@ class Candidate(models.Model):
         :return:
         """
         from time import perf_counter
-        if Candidate.objects.exists(id=candidate_id):
+        if Candidate.objects.filter(id=candidate_id).exists():
             df_candidate = DataFrame.from_records(Candidate.objects.filter(pk=candidate_id).values())
             df_political_party = PoliticalParty.objects.get(pk=df_candidate['political_party_id']).get_df()
 
