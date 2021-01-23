@@ -28,44 +28,40 @@ class Candidate(models.Model):
         return f'{self.user.first_name} {self.user.last_name}'
 
     def save(self, *args, **kwargs):
-        df = DataFrame(columns=['date', 'supporters', 'protesters'])
-        self.protestor_supporter_json = dumps(df.to_dict(orient='list'))
+        if not self.pk:
+            df = DataFrame(columns=['date', 'supporters', 'protesters'])
+            self.protestor_supporter_json = dumps(df.to_dict(orient='list'))
         super(Candidate, self).save(*args, **kwargs)
 
-    def decode_json(self):
+    def decode_json(self) -> DataFrame:
         return read_json(self.protestor_supporter_df)
 
     def encode_json(self, df):
         self.protestor_supporter_df = dumps(df.to_dict(orient='list'), indent=4)
         self.save()
 
-    def get_image_path(self):
-        try:
-            return self.profile_picture.path
-        except ValueError:
-            return False
+    def update_support_protest(self, support, protest):
+        '''
+        updates the json with the new supporters and protesters
+        :param support:
+        :param protest:
+        :return:
+        '''
+        df = self.decode_json()
+        series = Series({'date': timezone.now().timestamp(),
+                         'supporters': support,
+                         'protesters': protest})
+        df = df.append(series, ignore_index=True)
+        self.encode_json(df)
 
     def toggle_supporter(self, operation):
-        if operation == '+':
-            self.supporters += 1
-            df = self.decode_json()
-            series = Series({'date': timezone.now().timestamp(),
-                             'supporters': self.supporters,
-                             'protesters': self.protesters})
-            df = df.append(series, ignore_index=True)
-            self.encode_json(df)
-        elif operation == '-':
-            self.supporters -= 1
-            df = self.decode_json()
-            series = Series({'date': timezone.now().timestamp(),
-                             'supporters': self.supporters,
-                             'protesters': self.protesters})
-            df = df.append(series, ignore_index=True)
-            self.encode_json(df)
+        self.supporters = self.supporters + 1 if operation == '+' else self.supporters - 1
+        self.update_support_protest(self.supporters, self.protesters)
         self.save()
 
     def toggle_protester(self, operation):
-        self.protesters = self.protesters + 1 if operation == '+' else self.protesters - 1
+        self.protesters = self.protesters + 1 if operation == '+' else self.supporters-1
+        self.update_support_protest(self.supporters, self.protesters)
         self.save()
 
     @staticmethod
@@ -152,3 +148,9 @@ class Candidate(models.Model):
         df_candidates['voter_match'] = df_candidates['id'].map(df_voter_candidate_match.to_dict(orient='index'))
 
         return df_candidates
+
+    def get_image_path(self):
+        try:
+            return self.profile_picture.path
+        except ValueError:
+            return False

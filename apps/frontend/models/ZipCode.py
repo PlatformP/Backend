@@ -18,13 +18,14 @@ class ZipCode(models.Model):
         return str(self.zipcode)
 
     def save(self, *args, **kwargs):
-        df = US_GEO_CONFIG.query_postal_code(self.zipcode)
-        self.country_code = df.country_code
-        self.place_name = df.place_name
-        self.state_name = df.state_name
-        self.state_code = df.state_code
-        self.state_key = get_key_from_state(self.state_code)
-        self.county_name = df.county_name
-        self.county_code = df.county_code
+        if not self.pk:
+            df = US_GEO_CONFIG.query_postal_code(self.zipcode)
+            self.country_code = df.country_code
+            self.place_name = df.place_name
+            self.state_name = df.state_name
+            self.state_code = df.state_code
+            self.state_key = get_key_from_state(self.state_code)
+            self.county_name = df.county_name
+            self.county_code = df.county_code
 
         super(ZipCode, self).save(*args, **kwargs)
