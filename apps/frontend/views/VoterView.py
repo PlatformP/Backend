@@ -61,7 +61,7 @@ class VoterViewSet(viewsets.ViewSet):
         """
         candidate_pk = VoterCandidateMatch.objects.filter(voter__user=request.user, favorite=True).values_list(
             'candidate_id', flat=True)
-        df_candidate = Candidate.get_df(candidate_id=candidate_pk, voter_user=request.user)
+        df_candidate = Candidate.get_multiple_df(candidate_ids=candidate_pk, user=request.user)
 
         def get_election_name_id_from_cand(x):
             election_id = Candidate.objects.get(pk=x).electioninline_set.values_list('election_id', flat=True)[0]
