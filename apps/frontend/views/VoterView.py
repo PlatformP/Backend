@@ -11,8 +11,7 @@ from apps.frontend.models.Election import Election
 from apps.frontend.models.Candidate import Candidate
 from apps.frontend.models.ZipCode import ZipCode
 
-from Scripts.HelperMethods import get_ballot_by_queryset, get_candidate_df, get_model_with_kwargs_else_false, \
-    get_model_df_with_kwargs_else_false, update_model_instance_from_post
+from Scripts.HelperMethods import get_model_with_kwargs_else_false, get_model_df_with_kwargs_else_false
 from pandas import DataFrame
 
 
@@ -36,7 +35,7 @@ class VoterViewSet(viewsets.ViewSet):
         city_elections = Election.objects.filter(location__city=voter_zip_code.place_name, type=0)
         instance_query = national_elections | state_elections | county_elections | city_elections
 
-        data = get_ballot_by_queryset(queryset=instance_query, user=request.user)
+        data = Election.get_ballot_df_by_queryset(queryset=instance_query, user=request.user).to_json(orient='records')
         return Response(data=data, status=HTTP_200_OK)
 
     @action(detail=False, methods=['GET'], url_path='get_fav_election')
@@ -50,7 +49,7 @@ class VoterViewSet(viewsets.ViewSet):
             voter__user=request.user). \
             values_list('election_id', flat=True)
         election_query = Election.objects.filter(pk__in=voter_fav_election_id)
-        data = get_ballot_by_queryset(queryset=election_query, user=request.user)
+        data = Election.get_ballot_df_by_queryset(queryset=election_query, user=request.user).to_json(orient='records')
         return Response(data=data, status=HTTP_200_OK)
 
     @action(detail=False, methods=['GET'], url_path='get_fav_candidate')
@@ -62,7 +61,7 @@ class VoterViewSet(viewsets.ViewSet):
         """
         candidate_pk = VoterCandidateMatch.objects.filter(voter__user=request.user, favorite=True).values_list(
             'candidate_id', flat=True)
-        df_candidate = get_candidate_df(candidate_ids=candidate_pk, user=request.user)
+        df_candidate = Candidate.get_df(candidate_id=candidate_pk, voter_user=request.user)
 
         def get_election_name_id_from_cand(x):
             election_id = Candidate.objects.get(pk=x).electioninline_set.values_list('election_id', flat=True)[0]

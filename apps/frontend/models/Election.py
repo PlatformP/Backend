@@ -63,3 +63,38 @@ class Election(models.Model):
         df_election['candidates'] = df_election['id'].map(candidate_in_election)
 
         return df_election
+
+    @staticmethod
+    def get_ballot_df_by_queryset(queryset, user):
+        '''
+        function that gets a json of the ballot
+        :param queryset:
+        :param user:
+        :return: JSON of the dataframe of al elections
+        '''
+
+        candidate_ids = set(ElectionInLine.objects.filter(election__pk__in=set(queryset.values_list('id', flat=True)))
+                            .values_list('candidate_id', flat=True))
+
+        df_candidates = Candidate.get_multiple_df(candidate_ids=candidate_ids, user=user)
+
+        df_election = DataFrame.from_records(queryset.values())
+
+        # getting the dataframe from the location
+        location_ids = set(df_election['location_id'])
+        df_location = DataFrame.from_records(Location.objects.filter(pk__in=location_ids).values())
+        df_location.set_index('id', inplace=True)
+
+        # mapping the location primary key to the dict of the location
+        df_election['location_id'] = df_election['location_id'].map(df_location.to_dict(orient='index'))
+
+        df_election.rename(columns={'location_id': 'location'}, inplace=True)
+        df_candidates.set_index('id', inplace=True, drop=False)
+
+        def candidate_in_election(x):
+            return df_candidates.loc[Election.objects.get(pk=x).
+                electioninline_set.values_list('candidate_id', flat=True)].to_dict(orient='records')
+
+        df_election['candidates'] = df_election['id'].map(candidate_in_election)
+
+        return df_election
