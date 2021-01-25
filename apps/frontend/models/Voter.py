@@ -29,7 +29,8 @@ class Voter(Base):
         making sure the dob is the right format
         otherwise making it a datetime object
         '''
-        self.dob = dt.fromtimestamp(self.dob / 1000)
+        if type(self.dob) == int:
+            self.dob = dt.fromtimestamp(self.dob / 1000)
 
         super(Voter, self).save(*args, **kwargs)
     
