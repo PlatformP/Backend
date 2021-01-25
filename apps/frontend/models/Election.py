@@ -107,4 +107,6 @@ class Election(models.Model):
         df_election['candidates'] = df_election['id'].map(candidate_in_election)
         df_election['favorite'] = df_election['id'].map(is_favorite)
 
+        df_election.sort_values('type', ascending=False, inplace=True)
+
         return df_election
