@@ -3,6 +3,7 @@ from django.db import models
 from apps.frontend.models.ElectionInLine import ElectionInLine
 from apps.frontend.models.Candidate import Candidate
 from apps.frontend.models.Location import Location
+from apps.frontend.models.VoterFavElections import VoterFavElections
 
 from pandas import DataFrame
 
@@ -60,7 +61,11 @@ class Election(models.Model):
             return df_candidates.loc[Election.objects.get(pk=x).
                 electioninline_set.values_list('candidate_id', flat=True)].to_dict(orient='records')
 
+        def is_favorite(x):
+            return VoterFavElections.objects.filter(voter__user=user, election__id=x).exists()
+
         df_election['candidates'] = df_election['id'].map(candidate_in_election)
+        df_election['favorite'] = df_election['id'].map(is_favorite)
 
         return df_election
 
@@ -95,6 +100,10 @@ class Election(models.Model):
             return df_candidates.loc[Election.objects.get(pk=x).
                 electioninline_set.values_list('candidate_id', flat=True)].to_dict(orient='records')
 
+        def is_favorite(x):
+            return VoterFavElections.objects.filter(voter__user=user, election__id=x).exists()
+
         df_election['candidates'] = df_election['id'].map(candidate_in_election)
+        df_election['favorite'] = df_election['id'].map(is_favorite)
 
         return df_election
