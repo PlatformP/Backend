@@ -61,14 +61,8 @@ class VoterViewSet(viewsets.ViewSet):
         """
         candidate_pk = VoterCandidateMatch.objects.filter(voter__user=request.user, favorite=True).values_list(
             'candidate_id', flat=True)
-        df_candidate = Candidate.get_multiple_df(candidate_ids=candidate_pk, user=request.user)
+        df_candidate = Candidate.get_multiple_df(candidate_ids=candidate_pk, user=request.user, election=True)
 
-        def get_election_name_id_from_cand(x):
-            election_id = Candidate.objects.get(pk=x).electioninline_set.values_list('election_id', flat=True)[0]
-            df_election = DataFrame.from_records(Election.objects.filter(pk=election_id).values('id', 'name', 'type'))
-            return df_election.to_dict(orient='records')[0]
-
-        df_candidate['election'] = df_candidate['id'].map(get_election_name_id_from_cand)
         data = df_candidate.to_json(orient='records')
 
         return Response(data=data, status=HTTP_200_OK)

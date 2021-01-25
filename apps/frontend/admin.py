@@ -1,10 +1,10 @@
 from django.contrib import admin
 
+from .models.Election import Election
 from .models.Candidate import Candidate
 from .models.Policy import Policy
 from .models.ElectionInLine import ElectionInLine
 from .models.Location import Location
-from .models.Election import Election
 from .models.Voter import Voter
 from .models.VoterFavElections import VoterFavElections
 from .models.VoterCandidateMatch import VoterCandidateMatch

@@ -18,7 +18,7 @@ class CandidateViewSet(viewsets.ViewSet):
         :return:
         """
         try:
-            candidate_df = Candidate.get_df(candidate_id=primary_key, voter_user=request.user)
+            candidate_df = Candidate.get_df(candidate_id=primary_key, voter_user=request.user, election=True)
         except ValueError:
             return Response({}, status=HTTP_404_NOT_FOUND)
         return Response(data=candidate_df.to_json(orient='records'), status=HTTP_200_OK)

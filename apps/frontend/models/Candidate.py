@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+
 from django.contrib.auth.models import User
 from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
 from apps.frontend.models.PoliticalParty import PoliticalParty
@@ -19,6 +20,7 @@ class Candidate(models.Model):
     protesters = models.IntegerField(default=None, null=True, blank=True)
 
     protestor_supporter_json = models.JSONField()
+    social_media_json = models.JSONField(default=dict)
 
     class Meta:
         verbose_name = 'Candidates'
@@ -65,16 +67,31 @@ class Candidate(models.Model):
         self.save()
 
     @staticmethod
-    def get_df(candidate_id, voter_user) -> DataFrame:
+    def get_election_name_id_from_cand(pk):
+        """
+        returns a dictionary of the election type and name for the candidate
+        to be used when mapping through the candidate df
+        :param pk: primary key of candidate
+        :return:
+        """
+        from .Election import Election
+
+        election_id = Candidate.objects.get(pk=pk).electioninline_set.values_list('election_id', flat=True)[0]
+        df_election = DataFrame.from_records(Election.objects.filter(pk=election_id).values('id', 'name', 'type'))
+        return df_election.to_dict(orient='records')[0]
+
+    @staticmethod
+    def get_df(candidate_id, voter_user, *args, **kwargs) -> DataFrame:
         """
         gets a DataFrame for the candidate
         :param candidate_id:
         :param voter_user:
+        :param args: which fields to include with the candidate
         :return:
         """
         from time import perf_counter
         if Candidate.objects.filter(id=candidate_id).exists():
-            df_candidate = DataFrame.from_records(Candidate.objects.filter(pk=candidate_id).values())
+            df_candidate = DataFrame.from_records(Candidate.objects.filter(pk=candidate_id).values(*args))
             df_political_party = PoliticalParty.objects.get(pk=df_candidate['political_party_id']).get_df()
 
             df_voter_candidate_match = DataFrame.from_records(VoterCandidateMatch.objects.filter(voter__user=voter_user,
@@ -100,17 +117,21 @@ class Candidate(models.Model):
             df_candidate['voter_match'] = df_candidate['id'].map(df_voter_candidate_match.to_dict(orient='index'))
 
             df_candidate.rename(columns={'political_party_id': 'political_party', 'user_id': 'user'}, inplace=True)
+
+            if 'election' in kwargs and kwargs['election']:
+                df_candidate['election'] = df_candidate['id'].map(Candidate.get_election_name_id_from_cand)
         else:
             raise ValueError
 
         return df_candidate
 
     @staticmethod
-    def get_multiple_df(candidate_ids, user) -> DataFrame:
+    def get_multiple_df(candidate_ids, user, *args, **kwargs) -> DataFrame:
         """
             returns a DataFrame of all the Candidates with the appropriate coloumns filled in
             :param candidate_ids: list of candidate id's
             :param user: user instance with is used to find the the VoterCandidateMatch appropriate to the user
+            :param args: all the fields from the candidate instance
             :return: DataFrame
             """
 
@@ -123,7 +144,7 @@ class Candidate(models.Model):
         df_political_party['party_color'] = df_political_party_orig['name'].map(PoliticalParty.COLOR_DICT)
         df_political_party.set_index('id', inplace=True)
 
-        df_candidates = DataFrame.from_records(Candidate.objects.filter(id__in=candidate_ids).values())
+        df_candidates = DataFrame.from_records(Candidate.objects.filter(id__in=candidate_ids).values(*args))
         df_candidates['political_party_id'] = df_candidates['political_party_id'].map(df_political_party
                                                                                       .to_dict(orient='index'))
 
@@ -147,7 +168,11 @@ class Candidate(models.Model):
         df_voter_candidate_match.set_index('candidate_id', inplace=True)
         df_candidates['voter_match'] = df_candidates['id'].map(df_voter_candidate_match.to_dict(orient='index'))
 
+        if 'election' in kwargs and kwargs['election']:
+            df_candidates['election'] = df_candidates['id'].map(Candidate.get_election_name_id_from_cand)
+
         return df_candidates
+
 
     def get_image_path(self):
         try:
