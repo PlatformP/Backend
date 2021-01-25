@@ -7,6 +7,7 @@ from apps.frontend.models.VoterFavElections import VoterFavElections
 
 from pandas import DataFrame
 
+
 class Election(models.Model):
     STATUS_CHOICE_FIELD = [
         (1, 'Future'),

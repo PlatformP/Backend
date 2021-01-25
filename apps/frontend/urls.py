@@ -1,7 +1,7 @@
 from django.urls import include, path
 from rest_framework import routers
 from .views.ElectionView import ElectionViewSet
-from .views.CandidateViewSet import CandidateViewSet
+from .views.CandidateView import CandidateViewSet
 from .views.VoterView import VoterViewSet
 
 router = routers.DefaultRouter()

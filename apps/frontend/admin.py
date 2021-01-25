@@ -10,8 +10,9 @@ from .models.VoterFavElections import VoterFavElections
 from .models.VoterCandidateMatch import VoterCandidateMatch
 from .models.PoliticalParty import PoliticalParty
 from .models.ZipCode import ZipCode
+from .models.Survey import Survey
 from .models.SurveyQuestion import SurveyQuestion
-from .models.SurveyQuestionInLine import SurveyQuestionInLine
+from .models.SurveyQuestionAnswers import SurveyQuestionAnswers
 
 
 # Inlines
@@ -31,8 +32,12 @@ class VoterCandidateMatchInLine(admin.TabularInline):
     model = VoterCandidateMatch
 
 
+class SurveyQuestionAnswersInLine(admin.TabularInline):
+    model = SurveyQuestionAnswers
+
+
 class SurveyQuestionInLine(admin.TabularInline):
-    model = SurveyQuestionInLine
+    model = SurveyQuestion
 
 
 # models
@@ -47,12 +52,12 @@ class LocationAdmin(admin.ModelAdmin):
 
 
 class CandidateAdmin(admin.ModelAdmin):
-    inlines = [PolicyInLine, SurveyQuestionInLine]
+    inlines = [PolicyInLine, SurveyQuestionAnswersInLine]
     list_display = ['user', '__str__', 'bio', 'popularity', 'supporters', 'protesters']
 
 
 class VoterAdmin(admin.ModelAdmin):
-    inlines = (Voter_FavElections_Inline, VoterCandidateMatchInLine, SurveyQuestionInLine)
+    inlines = (Voter_FavElections_Inline, VoterCandidateMatchInLine, SurveyQuestionAnswersInLine)
     list_display = ['user', '__str__']
 
 
@@ -66,8 +71,9 @@ class ZipCodeAdmin(admin.ModelAdmin):
                        'state_key', 'county_name', 'county_code']
 
 
-class SurveyQuestionAdmin(admin.ModelAdmin):
+class SurveyAdmin(admin.ModelAdmin):
     list_display = ['__str__']
+    inlines = [SurveyQuestionInLine]
 
 
 admin.site.register(Candidate, CandidateAdmin)
@@ -76,4 +82,4 @@ admin.site.register(Location, LocationAdmin)
 admin.site.register(Voter, VoterAdmin)
 admin.site.register(PoliticalParty, Political_PartyAdmin)
 admin.site.register(ZipCode, ZipCodeAdmin)
-admin.site.register(SurveyQuestion, SurveyQuestionAdmin)
+admin.site.register(Survey, SurveyAdmin)
