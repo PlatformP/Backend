@@ -51,6 +51,6 @@ class Voter(Base):
     def get_survey_answers(question_ids, user) -> DataFrame:
         df_survey_question_answers = DataFrame.from_records(
             SurveyQuestionAnswers.objects.filter(question__pk__in=question_ids, voter__user=user).values('question_id',
-                                                                                                         'answer'))
+                                                                                                         'answer'), columns=['question_id', 'answer'])
         df_survey_question_answers.set_index('question_id', inplace=True)
         return df_survey_question_answers
