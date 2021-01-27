@@ -3,7 +3,7 @@ This is the backend for grassrootsusa.com
 To interact with the frontend it uses REST endpoints
 
 ## Setting Up The Project
-Set up a python virtual environment using anaconda with the name 'candid-politics' and python=3.8. For anaconda refrence use this [Link](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf).
+Set up a python virtual environment using anaconda with the name 'backend' and python=3.8. For anaconda refrence use this [Link](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf).
 then use pip to install the modules from the requirments.txt.
 
 Once you have the project cloned and the python environment set up cd into the project. To create the migrations type in `python manage.py makemigrations` followed by `python manage.py migrate`. This populates the databases and creates the migrations. Then to create a admin user write `python manage.py createsuperuser` and fill out the information.
@@ -16,7 +16,7 @@ we will use Github desktop to commit work. there is a guide [here](https://docs.
 We have a dev and a master branch. The master branch will be updated from the dev once we decide to merge changes onto the server
 the commit process will go like this:
 1. Commit changes
-2. "Merge Into Currecnt Branch" (ctr+shift+M) and select dev
+2. Update from main
 3. Push Origin
 4. Create pull request
 
@@ -31,9 +31,6 @@ Anaconda is a python package manager
 
 - download link - [download](https://www.anaconda.com/products/individual)
 - cheat sheet - [sheet](https://docs.conda.io/projects/conda/en/4.6.0/_downloads/52a95608c49671267e40c689e0bc00ca/conda-cheatsheet.pdf)
-
-## Running Backend Server
-run the following commands `cd CandidPoliticsBackend` then `source venv/bin/activate` then `python manage.py runserver 0.0.0.0:8000`
 
 ## DB
 We are using a postgres DataBase
