@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from apps.frontend.models.ZipCode import ZipCode
 from apps.frontend.models.SurveyQuestionAnswers import SurveyQuestionAnswers
+from apps.frontend.models.SurveyQuestion import SurveyQuestion
 
 from Scripts.utils.BaseClass import Base
 from Scripts.HelperMethods import update_model_instance_from_post
@@ -54,3 +55,28 @@ class Voter(Base):
                                                                                                          'answer'), columns=['question_id', 'answer'])
         df_survey_question_answers.set_index('question_id', inplace=True)
         return df_survey_question_answers
+
+    @classmethod
+    def submit_survey_answers(cls, user, df_answers: DataFrame):
+        """
+        creates survey question answers in bulk from a dataframe
+        dataframe format + -------------------- +
+                         |question_id | answer  |
+                         + -------------------- +
+                         |            |         |
+                         |            |         |
+                         + -------------------- +
+        :param user:
+        :param df_answers:
+        :return:
+        """
+        voter = cls.objects.get(user=user)
+        survey_question_answers_bulk = []
+
+        def apply_method(x):
+            question_id, answer = x
+            survey_question_answers_bulk.append(SurveyQuestionAnswers(voter=voter, answer=answer,
+                                                                      question_id=question_id))
+
+        df_answers.apply(lambda x: apply_method(x))
+        SurveyQuestionAnswers.objects.bulk_create(survey_question_answers_bulk)

@@ -1,6 +1,5 @@
 from django.db import models
 
-
 class VoterCandidateMatch(models.Model):
 
     voter = models.ForeignKey('frontend.Voter', on_delete=models.CASCADE)
@@ -36,6 +35,6 @@ class VoterCandidateMatch(models.Model):
         self.candidate.toggle_protester('+' if self.protest else '-')
         self.save()
 
-    @staticmethod
+    @classmethod
     def calculate_voter_match_score():
         pass

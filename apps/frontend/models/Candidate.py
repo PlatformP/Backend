@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.contrib.auth.models import User
 from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
 from apps.frontend.models.PoliticalParty import PoliticalParty
+from apps.frontend.models.SurveyQuestionAnswers import SurveyQuestionAnswers
 
 from pandas import DataFrame, read_json, Series
 from json import dumps
@@ -62,12 +63,12 @@ class Candidate(models.Model):
         self.save()
 
     def toggle_protester(self, operation):
-        self.protesters = self.protesters + 1 if operation == '+' else self.supporters-1
+        self.protesters = self.protesters + 1 if operation == '+' else self.supporters - 1
         self.update_support_protest(self.supporters, self.protesters)
         self.save()
 
-    @staticmethod
-    def get_election_name_id_from_cand(pk):
+    @classmethod
+    def get_election_name_id_from_cand(cls, pk):
         """
         returns a dictionary of the election type and name for the candidate
         to be used when mapping through the candidate df
@@ -76,12 +77,12 @@ class Candidate(models.Model):
         """
         from .Election import Election
 
-        election_id = Candidate.objects.get(pk=pk).electioninline_set.values_list('election_id', flat=True)[0]
+        election_id = cls.objects.get(pk=pk).electioninline_set.values_list('election_id', flat=True)[0]
         df_election = DataFrame.from_records(Election.objects.filter(pk=election_id).values('id', 'name', 'type'))
         return df_election.to_dict(orient='records')[0]
 
-    @staticmethod
-    def get_df(candidate_id, voter_user, *args, **kwargs) -> DataFrame:
+    @classmethod
+    def get_df(cls, candidate_id, voter_user, *args, **kwargs) -> DataFrame:
         """
         gets a DataFrame for the candidate
         :param candidate_id:
@@ -90,8 +91,8 @@ class Candidate(models.Model):
         :return:
         """
         from time import perf_counter
-        if Candidate.objects.filter(id=candidate_id).exists():
-            df_candidate = DataFrame.from_records(Candidate.objects.filter(pk=candidate_id).values(*args))
+        if cls.objects.filter(id=candidate_id).exists():
+            df_candidate = DataFrame.from_records(cls.objects.filter(pk=candidate_id).values(*args))
             df_political_party = PoliticalParty.objects.get(pk=df_candidate['political_party_id']).get_df()
 
             df_voter_candidate_match = DataFrame.from_records(VoterCandidateMatch.objects.filter(voter__user=voter_user,
@@ -119,14 +120,14 @@ class Candidate(models.Model):
             df_candidate.rename(columns={'political_party_id': 'political_party', 'user_id': 'user'}, inplace=True)
 
             if 'election' in kwargs and kwargs['election']:
-                df_candidate['election'] = df_candidate['id'].map(Candidate.get_election_name_id_from_cand)
+                df_candidate['election'] = df_candidate['id'].map(cls.get_election_name_id_from_cand)
         else:
             raise ValueError
 
         return df_candidate
 
-    @staticmethod
-    def get_multiple_df(candidate_ids, user, *args, **kwargs) -> DataFrame:
+    @classmethod
+    def get_multiple_df(cls, candidate_ids, user, *args, **kwargs) -> DataFrame:
         """
             returns a DataFrame of all the Candidates with the appropriate coloumns filled in
             :param candidate_ids: list of candidate id's
@@ -144,7 +145,7 @@ class Candidate(models.Model):
         df_political_party['party_color'] = df_political_party_orig['name'].map(PoliticalParty.COLOR_DICT)
         df_political_party.set_index('id', inplace=True)
 
-        df_candidates = DataFrame.from_records(Candidate.objects.filter(id__in=candidate_ids).values(*args))
+        df_candidates = DataFrame.from_records(cls.objects.filter(id__in=candidate_ids).values(*args))
         df_candidates['political_party_id'] = df_candidates['political_party_id'].map(df_political_party
                                                                                       .to_dict(orient='index'))
 
@@ -169,10 +170,34 @@ class Candidate(models.Model):
         df_candidates['voter_match'] = df_candidates['id'].map(df_voter_candidate_match.to_dict(orient='index'))
 
         if 'election' in kwargs and kwargs['election']:
-            df_candidates['election'] = df_candidates['id'].map(Candidate.get_election_name_id_from_cand)
+            df_candidates['election'] = df_candidates['id'].map(cls.get_election_name_id_from_cand)
 
         return df_candidates
 
+    @classmethod
+    def submit_survey_answers(cls, user, df_answers):
+        """
+        creates survey question answers in bulk from a dataframe
+        dataframe format + -------------------- +
+                         |question_id | answer  |
+                         + -------------------- +
+                         |            |         |
+                         |            |         |
+                         + -------------------- +
+        :param user:
+        :param df_answers:
+        :return:
+        """
+        voter = cls.objects.get(user=user)
+        survey_question_answers_bulk = []
+
+        def apply_method(x):
+            question_id, answer = x
+            survey_question_answers_bulk.append(SurveyQuestionAnswers(voter=voter, answer=answer,
+                                                                      question_id=question_id))
+
+        df_answers.apply(lambda x: apply_method(x))
+        SurveyQuestionAnswers.objects.bulk_create(survey_question_answers_bulk)
 
     def get_image_path(self):
         try:
