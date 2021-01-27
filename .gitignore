@@ -138,3 +138,5 @@ Backend/settings_server.ini
 #media and static files
 /media/
 /static/
+JWT token google
+JWT token outlook
