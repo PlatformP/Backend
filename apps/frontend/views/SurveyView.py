@@ -4,7 +4,7 @@ from apps.frontend.models.SurveyQuestionAnswers import SurveyQuestionAnswers
 
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.status import HTTP_200_OK
+from rest_framework.status import HTTP_200_OK, HTTP_204_NO_CONTENT
 from rest_framework.response import Response
 
 from pandas import DataFrame
@@ -23,3 +23,4 @@ class SurveyViewSet(viewsets.ViewSet):
         candidate = Candidate.objects.filter(user=request.user).exists()
         df_answers = DataFrame(request.data)
         SurveyQuestionAnswers.submit_answers_from_df(user=request.user, df_answers=df_answers, candidate=candidate)
+        return Response({}, status=HTTP_204_NO_CONTENT)

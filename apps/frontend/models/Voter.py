@@ -71,11 +71,9 @@ class Voter(Base):
         :return:
         """
         voter = cls.objects.get(user=user)
-        survey_question_answers_bulk = []
 
         def apply_method(x):
             question_id, answer = x
-            SurveyQuestionAnswers.objects.update_or_create(voter=voter, answer=answer, question_id=question_id)
+            SurveyQuestionAnswers.objects.update_or_create(voter=voter, question_id=question_id, defaults={'answer': answer})
 
-        df_answers.apply(lambda x: apply_method(x))
-        #SurveyQuestionAnswers.objects.bulk_create(survey_question_answers_bulk)
+        df_answers.apply(lambda x: apply_method(x), axis=1)
