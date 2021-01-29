@@ -1,7 +1,9 @@
 from django.db import models
 
-class VoterCandidateMatch(models.Model):
+#from Scripts.HelperMethods import cosing_similarity
 
+
+class VoterCandidateMatch(models.Model):
     voter = models.ForeignKey('frontend.Voter', on_delete=models.CASCADE)
     candidate = models.ForeignKey('frontend.Candidate', on_delete=models.CASCADE)
     match_pct = models.FloatField(default=None, help_text='Match pct of the voter and candidate', null=True)
@@ -36,5 +38,6 @@ class VoterCandidateMatch(models.Model):
         self.save()
 
     @classmethod
-    def calculate_voter_match_score():
+    def calculate_voter_match_score(cls, candidate_id, candidate_vector, voter_id, voter_vector):
         pass
+        #match =

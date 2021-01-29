@@ -21,6 +21,9 @@ class Survey(models.Model):
     def __str__(self):
         return self.name
 
+    def get_question_ids(self):
+        return SurveyQuestion.objects.filter(survey=self).values_list('id', flat=True)
+
     @staticmethod
     def get_questions_with_answers(survey_id, user, candidate=False) -> DataFrame:
         df_survey_questions = DataFrame.from_records(SurveyQuestion.objects.filter(survey__pk__in=survey_id).values())

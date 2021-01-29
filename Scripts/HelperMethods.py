@@ -1,6 +1,7 @@
 from datetime import date
 from pandas import DataFrame
-
+from numpy import full
+from numpy.linalg import norm
 from apps.frontend.models.Location import Location
 
 
@@ -40,3 +41,25 @@ def get_key_from_state(state_code):
     from numpy import array, where
     state_array = array(list(Location.STATE_CHOICES))
     return where(state_array == state_code)[0][0]
+
+
+def negative_interp(x, x_inter, y_inter):
+    y1, y2 = y_inter
+    x1, x2 = x_inter
+
+    assert (x1 == 0)
+
+    return ((y1 - y2) / (x1 - x2)) * x + y1
+
+
+def find_max_norm(n, min, max):
+    v1 = full(n, min)
+    v2 = full(n, max)
+
+    return norm(v2 - v1)
+
+
+def similarity(v1, v2):
+    max_bound = find_max_norm(v1.size, 0, 4)
+
+    return negative_interp(norm(v2 - v1), [0, max_bound], [100, 0])

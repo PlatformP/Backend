@@ -75,8 +75,7 @@ class Voter(Base):
 
         def apply_method(x):
             question_id, answer = x
-            survey_question_answers_bulk.append(SurveyQuestionAnswers(voter=voter, answer=answer,
-                                                                      question_id=question_id))
+            SurveyQuestionAnswers.objects.update_or_create(voter=voter, answer=answer, question_id=question_id)
 
         df_answers.apply(lambda x: apply_method(x))
-        SurveyQuestionAnswers.objects.bulk_create(survey_question_answers_bulk)
+        #SurveyQuestionAnswers.objects.bulk_create(survey_question_answers_bulk)
