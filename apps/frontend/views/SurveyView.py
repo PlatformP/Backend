@@ -7,7 +7,7 @@ from rest_framework.decorators import action
 from rest_framework.status import HTTP_200_OK
 from rest_framework.response import Response
 
-from pandas import read_json
+from pandas import DataFrame
 
 class SurveyViewSet(viewsets.ViewSet):
     queryset = Survey.objects.all()
@@ -21,7 +21,5 @@ class SurveyViewSet(viewsets.ViewSet):
     @action(detail=False, methods=['POST'], url_path='submit_answers')
     def submit_answers(self, request):
         candidate = Candidate.objects.filter(user=request.user).exists()
-
-        df_answers = read_json(request.data)
-
+        df_answers = DataFrame(request.data)
         SurveyQuestionAnswers.submit_answers_from_df(user=request.user, df_answers=df_answers, candidate=candidate)
