@@ -1,6 +1,7 @@
 from django.db import models
 
 from apps.frontend.models.SurveyQuestion import SurveyQuestion
+from apps.frontend.models.SurveyQuestionAnswers import SurveyQuestionAnswers
 from apps.frontend.models.Voter import Voter
 
 from pandas import DataFrame
@@ -21,18 +22,22 @@ class Survey(models.Model):
     def __str__(self):
         return self.name
 
-    def get_question_ids(self):
-        return SurveyQuestion.objects.filter(survey=self).values_list('id', flat=True)
+    @staticmethod
+    def get_question_ids(survey_id):
+        return SurveyQuestion.objects.filter(survey_id=survey_id).values_list('id', flat=True)
+
+    @classmethod
+    def are_all_questions_answered(cls, survey_id, user) -> tuple:
+        question_ids = cls.get_question_ids(survey_id)
+
+        return set(SurveyQuestionAnswers.objects.filter(voter__user=user, question__survey__id=survey_id).
+                   values_list('question_id', flat=True)) == set(question_ids), set(question_ids)
 
     @staticmethod
-    def get_questions_with_answers(survey_id, user, candidate=False) -> DataFrame:
+    def get_questions_with_answers(survey_id, user, **kwargs) -> DataFrame:
         df_survey_questions = DataFrame.from_records(SurveyQuestion.objects.filter(survey__pk__in=survey_id).values())
         questions_ids_set = set(df_survey_questions['id'])
-        if candidate:
-            # TODO Has to be implemented still
-            pass
-        else:
-            df_answers = Voter.get_survey_answers(question_ids=questions_ids_set, user=user)
+        df_answers = SurveyQuestionAnswers.get_survey_answers(questions_ids_set, user, **kwargs)
 
         df_survey_questions['answer'] = df_survey_questions['id'].map(df_answers.to_dict(orient='index'))
 

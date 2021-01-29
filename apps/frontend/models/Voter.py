@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from apps.frontend.models.ZipCode import ZipCode
 from apps.frontend.models.SurveyQuestionAnswers import SurveyQuestionAnswers
-from apps.frontend.models.SurveyQuestion import SurveyQuestion
+from apps.frontend.models.VoterCandidateMatch import VoterCandidateMatch
+# from apps.frontend.models.Survey import Survey
 
 from Scripts.utils.BaseClass import Base
 from Scripts.HelperMethods import update_model_instance_from_post
@@ -48,14 +49,6 @@ class Voter(Base):
 
         super(Voter, self).update_with_kwargs(**kwargs)
 
-    @staticmethod
-    def get_survey_answers(question_ids, user) -> DataFrame:
-        df_survey_question_answers = DataFrame.from_records(
-            SurveyQuestionAnswers.objects.filter(question__pk__in=question_ids, voter__user=user).values('question_id',
-                                                                                                         'answer'), columns=['question_id', 'answer'])
-        df_survey_question_answers.set_index('question_id', inplace=True)
-        return df_survey_question_answers
-
     @classmethod
     def submit_survey_answers(cls, user, df_answers: DataFrame):
         """
@@ -63,7 +56,6 @@ class Voter(Base):
         dataframe format + -------------------- +
                          |question_id | answer  |
                          + -------------------- +
-                         |            |         |
                          |            |         |
                          + -------------------- +
         :param user:
@@ -74,6 +66,28 @@ class Voter(Base):
 
         def apply_method(x):
             question_id, answer = x
-            SurveyQuestionAnswers.objects.update_or_create(voter=voter, question_id=question_id, defaults={'answer': answer})
+            SurveyQuestionAnswers.objects.update_or_create(voter=voter, question_id=question_id,
+                                                           defaults={'answer': answer})
 
         df_answers.apply(lambda x: apply_method(x), axis=1)
+
+    @classmethod
+    def calculate_voter_matches(cls, question_ids, user):
+
+        voter = cls.objects.get(user=user)
+        candidate_ids = set(voter.votercandidatematch_set.values_list('candidate_id', flat=True))
+
+        voter_vector = SurveyQuestionAnswers.get_survey_answers(question_ids, user, voter_match=True)
+
+        voter_candidate_match_for_bulk_update = []
+        for candidate_id in candidate_ids:
+            candidate_vector = SurveyQuestionAnswers.get_survey_answers(question_ids, user=None,
+                                                                        candidate_id=candidate_id, candidate=True,
+                                                                        voter_match=True)
+            voter_candidate_match_for_bulk_update.append(VoterCandidateMatch.
+                                                         calculate_voter_match_score(candidate_id=candidate_id,
+                                                                                     candidate_vector=candidate_vector,
+                                                                                     voter_id=voter.pk,
+                                                                                     voter_vector=voter_vector))
+
+        VoterCandidateMatch.objects.bulk_update(voter_candidate_match_for_bulk_update, ['match_pct'])
