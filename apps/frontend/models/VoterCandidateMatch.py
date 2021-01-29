@@ -25,10 +25,6 @@ class VoterCandidateMatch(models.Model):
     def __str__(self):
         return str(self.candidate)
 
-    def save(self, *args, **kwargs):
-        self.match_pct = round(self.match_pct, 2)
-        super(VoterCandidateMatch, self).save(*args, **kwargs)
-
     def toggle_fav(self):
         self.favorite = not self.favorite
         self.save()

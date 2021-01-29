@@ -62,4 +62,4 @@ def find_max_norm(n, min, max):
 def similarity(v1, v2):
     max_bound = find_max_norm(v1.size, 0, 4)
 
-    return negative_interp(norm(v2 - v1), [0, max_bound], [100, 0])
+    return round(negative_interp(norm(v2 - v1), [0, max_bound], [100, 0]), 2)
