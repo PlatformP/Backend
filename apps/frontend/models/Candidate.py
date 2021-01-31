@@ -37,7 +37,7 @@ class Candidate(models.Model):
         super(Candidate, self).save(*args, **kwargs)
 
     def decode_json(self) -> DataFrame:
-        return read_json(self.protestor_supporter_df)
+        return read_json(self.protestor_supporter_json)
 
     def encode_json(self, df):
         self.protestor_supporter_df = dumps(df.to_dict(orient='list'), indent=4)
