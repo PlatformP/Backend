@@ -40,6 +40,7 @@ class Candidate(models.Model):
         return read_json(self.protestor_supporter_json)
 
     def encode_json(self, df):
+        df['date'] = df['date'].astype(str)
         self.protestor_supporter_json = dumps(df.to_dict(orient='list'), indent=4)
         self.save()
 
