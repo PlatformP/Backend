@@ -51,10 +51,15 @@ class Candidate(models.Model):
         :return:
         '''
         df = self.decode_json()
+        print('-----------------------')
+        print(df)
         series = Series({'date': timezone.now().timestamp(),
                          'supporters': support,
                          'protesters': protest})
+        print(series)
         df = df.append(series, ignore_index=True)
+        print(df)
+        print('------------------------')
         self.encode_json(df)
 
     def toggle_supporter(self, operation):
