@@ -40,7 +40,7 @@ class Candidate(models.Model):
         return read_json(self.protestor_supporter_json)
 
     def encode_json(self, df):
-        self.protestor_supporter_df = dumps(df.to_dict(orient='list'), indent=4)
+        self.protestor_supporter_json = dumps(df.to_dict(orient='list'), indent=4)
         self.save()
 
     def update_support_protest(self, support, protest):
@@ -51,15 +51,10 @@ class Candidate(models.Model):
         :return:
         '''
         df = self.decode_json()
-        print('-----------------------')
-        print(df)
         series = Series({'date': timezone.now().timestamp(),
                          'supporters': support,
                          'protesters': protest})
-        print(series)
         df = df.append(series, ignore_index=True)
-        print(df)
-        print('------------------------')
         self.encode_json(df)
 
     def toggle_supporter(self, operation):
@@ -70,7 +65,9 @@ class Candidate(models.Model):
     def toggle_protester(self, operation):
         self.protesters = self.protesters + 1 if operation == '+' else self.supporters - 1
         self.update_support_protest(self.supporters, self.protesters)
-        self.save()
+
+    #def update_popularity(self,):
+    #    self.popularity
 
     @classmethod
     def get_election_name_id_from_cand(cls, pk):
