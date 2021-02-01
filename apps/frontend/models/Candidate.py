@@ -59,7 +59,7 @@ class Candidate(models.Model):
         :return:
         '''
         df = self.decode_json()
-        series = Series({'date': timezone.now().timestamp(),
+        series = Series({'date': int(timezone.now().timestamp()),
                          'supporters': support,
                          'protesters': protest})
         df = df.append(series, ignore_index=True)
@@ -78,7 +78,7 @@ class Candidate(models.Model):
         self.save()
 
     def update_popularity(self, save=False):
-        self.popularity = round(self.supporters / (self.supporters + self.protesters) * 100, 2)
+        self.popularity = round(self.supporters / (self.supporters + self.protesters) * 100)
         if save:
             self.save()
 
