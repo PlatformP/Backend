@@ -29,7 +29,7 @@ class VoterCandidateMatch(models.Model):
         self.favorite = not self.favorite
         self.save()
 
-    def toggle_support(self):
+    def toggle_support(self) -> candidate:
         if self.protest:
             self.protest = False
             self.candidate.toggle_protester('-')
@@ -37,7 +37,9 @@ class VoterCandidateMatch(models.Model):
         self.candidate.toggle_supporter('+' if self.support else '-')
         self.save()
 
-    def toggle_protest(self):
+        return self.candidate
+
+    def toggle_protest(self) -> candidate:
         if self.support:
             self.support = False
             self.candidate.toggle_supporter('-')
@@ -45,7 +47,8 @@ class VoterCandidateMatch(models.Model):
         self.candidate.toggle_protester('+' if self.protest else '-')
         self.save()
 
-    #def get_matches(self):
+        return self.candidate
+
     @classmethod
     def calculate_voter_match_score(cls, candidate_id, candidate_vector, voter_id, voter_vector):
         match = similarity(candidate_vector, voter_vector)

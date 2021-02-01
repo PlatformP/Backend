@@ -145,20 +145,22 @@ class VoterViewSet(viewsets.ViewSet):
     def toggle_candidate_support(self, request, primary_key):
         """
         toggles the support
+        :param request:
         :param primary_key: pk of the candidate
         :return: 204 if successfully
         """
         voter_candidate_match = VoterCandidateMatch.objects.get(voter__user=request.user, candidate__id=primary_key)
-        voter_candidate_match.toggle_support()
-        return Response({}, status=HTTP_204_NO_CONTENT)
+        candidate = voter_candidate_match.toggle_support()
+        return Response({'popularity': candidate.popularity}, status=HTTP_200_OK)
 
     @action(detail=False, methods=['PUT'], url_path='toggle_protest_candidate/(?P<primary_key>[0-9]+)')
     def toggle_candidate_protest(self, request, primary_key):
         """
         toggles the protest
+        :param request:
         :param primary_key: pk of the candidate
         :return: 204 if successfully
         """
         voter_candidate_match = VoterCandidateMatch.objects.get(voter__user=request.user, candidate__id=primary_key)
-        voter_candidate_match.toggle_protest()
-        return Response({}, status=HTTP_204_NO_CONTENT)
+        candidate = voter_candidate_match.toggle_protest()
+        return Response({'popularity': candidate.popularity}, status=HTTP_200_OK)

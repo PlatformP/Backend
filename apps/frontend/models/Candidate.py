@@ -39,10 +39,17 @@ class Candidate(models.Model):
     def decode_json(self) -> DataFrame:
         return read_json(self.protestor_supporter_json)
 
-    def encode_json(self, df):
+    def encode_json(self, df, save=False):
+        """
+        call witht the save method if method is not followed up with a self.save()
+        :param df:
+        :param save:
+        :return:
+        """
         df['date'] = df['date'].astype(str)
         self.protestor_supporter_json = dumps(df.to_dict(orient='list'), indent=4)
-        self.save()
+        if save:
+            self.save()
 
     def update_support_protest(self, support, protest):
         '''
@@ -61,14 +68,19 @@ class Candidate(models.Model):
     def toggle_supporter(self, operation):
         self.supporters = self.supporters + 1 if operation == '+' else self.supporters - 1
         self.update_support_protest(self.supporters, self.protesters)
+        self.update_popularity()
         self.save()
 
     def toggle_protester(self, operation):
         self.protesters = self.protesters + 1 if operation == '+' else self.supporters - 1
         self.update_support_protest(self.supporters, self.protesters)
+        self.update_popularity()
+        self.save()
 
-    #def update_popularity(self,):
-    #    self.popularity
+    def update_popularity(self, save=False):
+        self.popularity = self.supporters / (self.supporters + self.protesters)
+        if save:
+            self.save()
 
     @classmethod
     def get_election_name_id_from_cand(cls, pk):
