@@ -78,7 +78,7 @@ class Candidate(models.Model):
         self.save()
 
     def update_popularity(self, save=False):
-        self.popularity = self.supporters / (self.supporters + self.protesters)
+        self.popularity = self.supporters / (self.supporters + self.protesters) * 100
         if save:
             self.save()
 
