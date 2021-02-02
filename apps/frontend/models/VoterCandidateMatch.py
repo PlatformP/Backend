@@ -54,8 +54,12 @@ class VoterCandidateMatch(models.Model):
         survey_types = [0, 1, 2, 3, 4]
         match_arr = array([])
         for survey_type in survey_types:
-            if match := getattr(self, f'match_{survey_type}'):
+            match = getattr(self, f'match_{survey_type}')
+            if match is not None:
                 match_arr = append(match_arr, match)
+
+        print(f'candidate {str(self.candidate)} with {mean(match_arr)}, array {match_arr}')
+
         self.match_pct = mean(match_arr)
 
         if save:
