@@ -11,6 +11,10 @@ from json import dumps
 
 
 class Candidate(models.Model):
+
+    FIELDS_FOR_BALLOT = ['id', 'user_id', 'political_party_id', 'profile_picture', 'popularity', 'supporters',
+                         'protesters']
+
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     political_party = models.ForeignKey('PoliticalParty', on_delete=models.SET_NULL, null=True)
 
@@ -147,7 +151,7 @@ class Candidate(models.Model):
             returns a DataFrame of all the Candidates with the appropriate coloumns filled in
             :param candidate_ids: list of candidate id's
             :param user: user instance with is used to find the the VoterCandidateMatch appropriate to the user
-            :param args: all the fields from the candidate instance
+            :param args: fields to exclude form the candidate
             :return: DataFrame
             """
 
@@ -160,7 +164,7 @@ class Candidate(models.Model):
         df_political_party['party_color'] = df_political_party_orig['name'].map(PoliticalParty.COLOR_DICT)
         df_political_party.set_index('id', inplace=True)
 
-        df_candidates = DataFrame.from_records(cls.objects.filter(id__in=candidate_ids).values(*args))
+        df_candidates = DataFrame.from_records(cls.objects.filter(id__in=candidate_ids).values(*cls.FIELDS_FOR_BALLOT))
         df_candidates['political_party_id'] = df_candidates['political_party_id'].map(df_political_party
                                                                                       .to_dict(orient='index'))
 
