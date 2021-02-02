@@ -72,7 +72,7 @@ class Voter(Base):
         df_answers.apply(lambda x: apply_method(x), axis=1)
 
     @classmethod
-    def calculate_voter_matches(cls, question_ids, user):
+    def calculate_voter_matches(cls, question_ids, user, survey_type):
 
         voter = cls.objects.get(user=user)
         candidate_ids = set(voter.votercandidatematch_set.values_list('candidate_id', flat=True))
@@ -88,6 +88,8 @@ class Voter(Base):
                                                          calculate_voter_match_score(candidate_id=candidate_id,
                                                                                      candidate_vector=candidate_vector,
                                                                                      voter_id=voter.pk,
-                                                                                     voter_vector=voter_vector))
+                                                                                     voter_vector=voter_vector,
+                                                                                     survey_type=survey_type))
 
-        VoterCandidateMatch.objects.bulk_update(voter_candidate_match_for_bulk_update, ['match_pct'])
+        VoterCandidateMatch.objects.bulk_update(voter_candidate_match_for_bulk_update,
+                                                ['match_pct', f'match_{survey_type}'])

@@ -29,9 +29,10 @@ class Survey(models.Model):
     @classmethod
     def are_all_questions_answered(cls, survey_id, user) -> tuple:
         question_ids = cls.get_question_ids(survey_id)
+        survey_type = cls.objects.filter(pk=survey_id).values_list('survey_type', flat=True)[0]
 
         return set(SurveyQuestionAnswers.objects.filter(voter__user=user, question__survey__id=survey_id).
-                   values_list('question_id', flat=True)) == set(question_ids), set(question_ids)
+                   values_list('question_id', flat=True)) == set(question_ids), set(question_ids), survey_type
 
     @staticmethod
     def get_questions_with_answers(survey_id, user, **kwargs) -> DataFrame:

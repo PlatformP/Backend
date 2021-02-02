@@ -40,7 +40,7 @@ class SurveyViewSet(viewsets.ViewSet):
         df_answers = DataFrame(data)
         SurveyQuestionAnswers.submit_answers_from_df(user=request.user, df_answers=df_answers, candidate=candidate)
 
-        all_questions, question_ids = Survey.are_all_questions_answered(survey_id=survey_id, user=request.user)
+        all_questions, question_ids, survey_type = Survey.are_all_questions_answered(survey_id=survey_id, user=request.user)
         if all_questions:
-            Voter.calculate_voter_matches(question_ids=question_ids, user=request.user)
+            Voter.calculate_voter_matches(question_ids=question_ids, user=request.user, survey_type=survey_type)
         return Response({}, status=HTTP_204_NO_CONTENT)
