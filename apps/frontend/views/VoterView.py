@@ -150,6 +150,7 @@ class VoterViewSet(viewsets.ViewSet):
         :return: 204 if successfully
         """
         voter_candidate_match = VoterCandidateMatch.objects.get(voter__user=request.user, candidate__id=primary_key)
+        voter_candidate_match.toggle_support()
         return Response({}, status=HTTP_204_NO_CONTENT)
 
     @action(detail=False, methods=['PUT'], url_path='toggle_protest_candidate/(?P<primary_key>[0-9]+)')
@@ -161,4 +162,5 @@ class VoterViewSet(viewsets.ViewSet):
         :return: 204 if successfully
         """
         voter_candidate_match = VoterCandidateMatch.objects.get(voter__user=request.user, candidate__id=primary_key)
+        voter_candidate_match.toggle_protest()
         return Response({}, status=HTTP_204_NO_CONTENT)
