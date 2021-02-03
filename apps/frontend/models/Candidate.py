@@ -41,7 +41,7 @@ class Candidate(models.Model):
         super(Candidate, self).save(*args, **kwargs)
 
     def decode_json(self) -> DataFrame:
-        return read_json(self.protestor_supporter_json)
+        return read_json(self.protestor_supporter_json, convert_dates=False)
 
     def encode_json(self, df, save=False):
         """
@@ -58,15 +58,28 @@ class Candidate(models.Model):
     def update_support_protest(self, support, protest):
         '''
         updates the json with the new supporters and protesters
+
+        if the date is already in it just updates the values
         :param support:
         :param protest:
         :return:
         '''
         df = self.decode_json()
-        series = Series({'date': int(timezone.now().timestamp()),
-                         'supporters': support,
-                         'protesters': protest})
-        df = df.append(series, ignore_index=True)
+        last_row = df.iloc[-1] if df.size != 0 else False
+        create_new_row = True
+
+        if last_row is not False:
+            if timezone.datetime.fromtimestamp(int(last_row['date'])).date() == timezone.datetime.now().date():
+                create_new_row = False
+                last_row.supporters = support
+                last_row.protesters = protest
+                df.iloc[-1] = last_row
+
+        if create_new_row:
+            series = Series({'date': int(timezone.now().timestamp()),
+                             'supporters': support,
+                             'protesters': protest})
+            df = df.append(series, ignore_index=True)
         self.encode_json(df)
 
     def toggle_supporter(self, operation):
