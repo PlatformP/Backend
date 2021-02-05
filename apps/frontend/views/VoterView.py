@@ -1,5 +1,6 @@
-from rest_framework import viewsets
+from drf_yasg.utils import swagger_auto_schema
 
+from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.status import HTTP_200_OK, HTTP_404_NOT_FOUND, HTTP_500_INTERNAL_SERVER_ERROR, HTTP_204_NO_CONTENT
 from rest_framework.response import Response
@@ -14,17 +15,19 @@ from apps.frontend.models.ZipCode import ZipCode
 from Scripts.HelperMethods import get_model_with_kwargs_else_false, get_model_df_with_kwargs_else_false
 from pandas import DataFrame
 
+from apps.frontend.APIdocu.VoterViewDocs import response_ballot
 
 class VoterViewSet(viewsets.ViewSet):
     queryset = Voter.objects.all()
 
+    @swagger_auto_schema(responses=response_ballot)
     @action(['GET'], detail=False, url_path='ballot')
     def get_ballot(self, request):
-        '''
+        """
         returns the results for the ballot page. -> all the elections that are appropriate for the users zip code
         :param request:
         :return:
-        '''
+        """
 
         voter_zip_code = Voter.objects.get(user=request.user).zipcode
 
