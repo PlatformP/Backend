@@ -15,12 +15,13 @@ from apps.frontend.models.ZipCode import ZipCode
 from Scripts.HelperMethods import get_model_with_kwargs_else_false, get_model_df_with_kwargs_else_false
 from pandas import DataFrame
 
-from apps.frontend.APIdocu.VoterViewDocs import response_ballot
+from apps.frontend.APIdocu.VoterViewDocs import response_elections, response_get_profile
+
 
 class VoterViewSet(viewsets.ViewSet):
     queryset = Voter.objects.all()
 
-    @swagger_auto_schema(responses=response_ballot)
+    @swagger_auto_schema(responses=response_elections)
     @action(['GET'], detail=False, url_path='ballot')
     def get_ballot(self, request):
         """
@@ -41,6 +42,7 @@ class VoterViewSet(viewsets.ViewSet):
         data = Election.get_ballot_df_by_queryset(queryset=instance_query, user=request.user).to_json(orient='records')
         return Response(data=data, status=HTTP_200_OK)
 
+    @swagger_auto_schema(responses=response_elections)
     @action(detail=False, methods=['GET'], url_path='get_fav_election')
     def get_elections(self, request):
         """
@@ -98,13 +100,13 @@ class VoterViewSet(viewsets.ViewSet):
                                                                   voter__user=request.user,
                                                                   election__id=primary_key):
             voter_fav_election.delete()
-            return Response({'deleted': True}, status=HTTP_200_OK)
+            return Response({}, status=HTTP_200_OK)
         else:
             voter = Voter.objects.get(user=request.user)
             election = Election.objects.get(pk=primary_key)
             VoterFavElections.objects.create(voter=voter, election=election)
 
-            return Response({'created': True}, status=HTTP_200_OK)
+            return Response({}, status=HTTP_200_OK)
         return Response({}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
     @action(detail=False, methods=['POST', 'PUT'], url_path='edit_profile')
@@ -121,7 +123,7 @@ class VoterViewSet(viewsets.ViewSet):
             voter.update_with_kwargs(**data)
             return Response({}, status=HTTP_204_NO_CONTENT)
         else:
-            #TODO: HAS TO BE TESTED
+            # TODO: HAS TO BE TESTED
             data = {}
             for key, value in request.data.items():
                 data[key] = value
@@ -132,6 +134,7 @@ class VoterViewSet(viewsets.ViewSet):
             return Response({}, status=HTTP_204_NO_CONTENT)
         return Response({}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
+    @swagger_auto_schema(responses=response_get_profile)
     @action(detail=False, methods=['GET'], url_path='get_profile')
     def get_profile(self, request):
         voter_df = get_model_df_with_kwargs_else_false(Voter, 'id', 'zipcode__zipcode', 'user__first_name',

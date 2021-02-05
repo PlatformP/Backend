@@ -1,6 +1,6 @@
 from drf_yasg import openapi
 
-response_ballot = {
+response_elections = {
     "200": openapi.Response(
         description='/ballot',
         examples={
@@ -41,3 +41,20 @@ response_ballot = {
     )
 }
 
+response_get_profile = {
+    '200':  openapi.Response(
+        description='/get_profile',
+        examples={
+            'application/json': {
+                0: {
+                    'dob': 'int (epoch time)',
+                    'first_name': 'string',
+                    'last_name': 'string',
+                    'gender': 'int (0-2) (male, female, other)',
+                    'id': 'int',
+                    'zip_code': 'int'
+                }
+            }
+        }
+    )
+}
