@@ -6,6 +6,7 @@ from apps.frontend.models.Location import Location
 from apps.frontend.models.VoterFavElections import VoterFavElections
 
 from pandas import DataFrame
+from numpy import vectorize
 
 
 class Election(models.Model):
@@ -98,8 +99,16 @@ class Election(models.Model):
         df_candidates.set_index('id', inplace=True, drop=False)
 
         def candidate_in_election(x):
-            return df_candidates.loc[Election.objects.get(pk=x).
-                electioninline_set.values_list('candidate_id', flat=True)].to_dict(orient='records')
+            def fav_candidate(x):
+                return x['favorite']
+
+            fav_candidate_vectorized = vectorize(fav_candidate)
+
+            candidate_in_election = df_candidates.loc[Election.objects.get(pk=x).
+                electioninline_set.values_list('candidate_id', flat=True)]
+
+            return candidate_in_election.loc[fav_candidate_vectorized(candidate_in_election.voter_match.values)]
+
 
         def is_favorite(x):
             return VoterFavElections.objects.filter(voter__user=user, election__id=x).exists()
