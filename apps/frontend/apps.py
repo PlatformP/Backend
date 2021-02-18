@@ -6,3 +6,4 @@ class FrontendConfig(AppConfig):
 
     def ready(self):
         import apps.frontend.signals
+        import apps.frontend.tests
