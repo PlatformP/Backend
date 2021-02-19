@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_yasg',
     'apps.frontend',
+    'apps.email_signup'
 ]
 
 MIDDLEWARE = [
