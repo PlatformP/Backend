@@ -34,7 +34,7 @@ SECRET_KEY = config.get('secrets', 'SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config.getboolean('debug', 'DEBUG')
 
-ALLOWED_HOSTS = ['127.0.0.1', 'b.platformpolitical.com', '3.141.216.44']
+ALLOWED_HOSTS = ['127.0.0.1', '3.141.174.75', 'backend.platformpolitical.com']
 
 # Application definition
 
